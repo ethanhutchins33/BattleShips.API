@@ -7,15 +7,37 @@ namespace BattleShips.Game.API.Tests.Controllers
 {
     internal class GameControllerTests
     {
-        [Test]
-        public void GameController_should_make_GameService_create_new_game()
+        private IGameService _fakeGameService = A.Fake<IGameService>();
+        private GameController _sut;
+
+        [SetUp]
+        public void Setup()
         {
-            var GS = A.Fake<GameService>();
-            var controller = new GameController(GS);
+            _sut = new GameController(_fakeGameService);
+        }
+        
+        [Test]
+        public void CreateGame_should_return_OkResult()
+        {
+            var response = _sut.CreateGame();
+            Assert.That(response, Is.TypeOf<OkResult>());
+        }
 
-            var response = controller.CreateGame() as OkResult;
+        [Test]
+        public void CreateGame_should_create_game()
+        {
+            //should return a game URL/Id for sharing
+            _ = _sut.CreateGame();
+            A.CallTo(() => _fakeGameService.CreateNewGame()).MustHaveHappened();
+        }
 
-            Assert.That(response, Is.Not.Null);
+        [Test]
+        public void CreateGame_should_return_game_Id()
+        {
+            var response = _sut.CreateGame();
+            
+
+            
         }
     }
 }

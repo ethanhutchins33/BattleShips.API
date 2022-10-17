@@ -14,6 +14,7 @@ namespace BattleShips.Game.API.Controllers
         public IActionResult CreateGame()
         {
 
+            gameService.CreateNewGame();
             return Ok();
         }
     }
