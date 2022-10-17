@@ -1,4 +1,4 @@
-﻿namespace BattleShips.Game.API.Controllers
+﻿namespace BattleShips.Game.API
 {
     public class GameService : IGameService
     {
