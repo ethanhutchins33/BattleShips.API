@@ -2,5 +2,9 @@
 {
     public interface IGameService
     {
+        public void CreateNewGame()
+        {
+            return;
+        }
     }
 }

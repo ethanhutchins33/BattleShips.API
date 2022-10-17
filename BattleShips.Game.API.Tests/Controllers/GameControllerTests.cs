@@ -10,7 +10,7 @@ namespace BattleShips.Game.API.Tests.Controllers
         [Test]
         public void GameController_should_make_GameService_create_new_game()
         {
-            var GS = A.Fake<IGameService>();
+            var GS = A.Fake<GameService>();
             var controller = new GameController(GS);
 
             var response = controller.CreateGame() as OkResult;
