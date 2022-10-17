@@ -20,24 +20,25 @@ namespace BattleShips.Game.API.Tests.Controllers
         public void CreateGame_should_return_OkResult()
         {
             var response = _sut.CreateGame();
-            Assert.That(response, Is.TypeOf<OkResult>());
+            Assert.That(response, Is.TypeOf<OkObjectResult>());
         }
 
         [Test]
-        public void CreateGame_should_create_game()
+        public void CreateGame_should_call_to_GameService_to_create_game()
         {
-            //should return a game URL/Id for sharing
             _ = _sut.CreateGame();
-            A.CallTo(() => _fakeGameService.CreateNewGame()).MustHaveHappened();
+            A.CallTo(() => _fakeGameService.CreateNewGameId()).MustHaveHappened();
         }
 
         [Test]
-        public void CreateGame_should_return_game_Id()
+        public void CreateGame_should_return_id_from_game_service()
         {
-            var response = _sut.CreateGame();
-            
-
-            
+            A.CallTo(() => _fakeGameService.CreateNewGameId()).Returns("abc");
+            var response = _sut.CreateGame() as OkObjectResult;
+            Assert.That(response.Value, Is.EqualTo("abc"));
         }
+
+
+        
     }
 }

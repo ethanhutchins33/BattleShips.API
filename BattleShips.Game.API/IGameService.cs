@@ -2,9 +2,6 @@
 {
     public interface IGameService
     {
-        public void CreateNewGame()
-        {
-            return;
-        }
+        public string CreateNewGameId();
     }
 }

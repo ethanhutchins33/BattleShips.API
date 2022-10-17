@@ -4,18 +4,17 @@ namespace BattleShips.Game.API.Controllers
 {
     public class GameController : Controller
     {
-        IGameService gameService;
+        private readonly IGameService _gameService;
 
         public GameController(IGameService GS)
         {
-            gameService = GS;
+            _gameService = GS;
         }
 
         public IActionResult CreateGame()
         {
-
-            gameService.CreateNewGame();
-            return Ok();
+            var gameId = _gameService.CreateNewGameId();
+            return Ok(gameId);
         }
     }
 }
