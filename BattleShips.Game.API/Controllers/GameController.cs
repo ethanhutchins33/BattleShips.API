@@ -1,20 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BattleShips.Game.API.Library.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BattleShips.Game.API.Controllers
+namespace BattleShips.Game.API.Controllers;
+
+public class GameController : Controller
 {
-    public class GameController : Controller
+    private readonly IGameService _gameService;
+
+    public GameController(IGameService gameService)
     {
-        private readonly IGameService _gameService;
-
-        public GameController(IGameService GS)
-        {
-            _gameService = GS;
-        }
-
-        public IActionResult CreateGame()
-        {
-            var gameId = _gameService.CreateNewGameId();
-            return Ok(gameId);
-        }
+        _gameService = gameService;
     }
+
+    public IActionResult CreateGame()
+    {
+        var gameId = _gameService.CreateNewGameId();
+        return Ok(gameId);
+    }
+
+
 }

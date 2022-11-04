@@ -3,9 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattleShips.Game.API", "BattleShips.Game.API\BattleShips.Game.API.csproj", "{A574665B-DF7F-42E8-974D-A46452E02973}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API", "BattleShips.Game.API\BattleShips.Game.API.csproj", "{A574665B-DF7F-42E8-974D-A46452E02973}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattleShips.Game.API.Tests", "BattleShips.Game.API.Tests\BattleShips.Game.API.Tests.csproj", "{7FC656FB-8624-4414-9653-9212EB087570}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API.Tests", "BattleShips.Game.API.Tests\BattleShips.Game.API.Tests.csproj", "{7FC656FB-8624-4414-9653-9212EB087570}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API.Library", "BattleShips.Game.API.Library\BattleShips.Game.API.Library.csproj", "{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5761B1FD-2742-44B4-9043-3DD39B3C0043}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +28,10 @@ Global
 		{7FC656FB-8624-4414-9653-9212EB087570}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FC656FB-8624-4414-9653-9212EB087570}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FC656FB-8624-4414-9653-9212EB087570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
