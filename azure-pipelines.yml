@@ -1,0 +1,116 @@
+trigger:
+  - main
+
+pool:
+  name: Self-Hosted
+
+stages:
+  - stage: package
+    displayName: dotnet build api
+    dependsOn: []
+    variables:
+      buildConfiguration: "Release"
+    jobs:
+      - job: dotnet
+        container: ukhydrographicoffice/dotnetcore60-zip:latest
+        steps:
+        
+          - task: DotNetCoreCLI@2
+            displayName: 'dotnet test'
+            inputs:
+              command: "test"
+              projects: "/*.Tests/*.csproj"
+              arguments: "--configuration $(buildConfiguration)"
+
+          - task: DotNetCoreCLI@2
+            displayName: 'dotnet publish'
+            inputs:
+              command: "publish"
+              publishWebProjects: true
+              projects: "**/*.csproj"
+              arguments: "--configuration $(buildConfiguration)"
+              zipAfterPublish: true
+
+          - task: CopyFiles@2
+            displayName: 'Copy project files to staging directory'
+            inputs:
+              SourceFolder: $(Build.SourcesDirectory)
+              Contents: '**/publish.zip'
+              TargetFolder: $(Build.ArtifactStagingDirectory)
+              CleanTargetFolder: true
+              OverWrite: true
+              flattenFolders: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact: project'
+            inputs:
+              ArtifactName: project
+
+  # - stage: azure
+  #   displayName: run terraform scripts
+  #   dependsOn: []
+  #   variables:
+  #     - group: Battleships.Game.API.Secrets
+  #   jobs:
+  #     - job: terraform
+  #       container: ukhydrographicoffice/terraform-azure-powershell:latest
+  #       steps:
+  #         #Initialise terraform using manually defined project secrets (variables in Battleships Terraform Secrets). Gives terraform access and location to store .tfstate file in azure blob storage.
+  #         - bash: |
+  #             terraform init
+  #           displayName: "terraform init"
+  #           workingDirectory: "$(Build.SourcesDirectory)/build"
+  #           env:
+  #             ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
+  #             ARM_TENANT_ID: $(tf-tenant-id)
+  #             ARM_CLIENT_ID: $(tf-client-id)
+  #             ARM_CLIENT_SECRET: $(tf-client-secret)
+  #             ARM_ACCESS_KEY: $(tf-access-key)
+  #             TF_VAR_SQL_SERVER_USERNAME: $(tf-sql-server-admin-username)
+  #             TF_VAR_SQL_SERVER_PASSWORD: $(tf-sql-server-admin-password)
+
+  #         - bash: |
+  #             terraform plan -input=false -out=tfplan
+  #           displayName: "terraform plan"
+  #           workingDirectory: "$(Build.SourcesDirectory)/build"
+  #           env:
+  #             ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
+  #             ARM_TENANT_ID: $(tf-tenant-id)
+  #             ARM_CLIENT_ID: $(tf-client-id)
+  #             ARM_CLIENT_SECRET: $(tf-client-secret)
+  #             ARM_ACCESS_KEY: $(tf-access-key)
+  #             TF_VAR_SQL_SERVER_USERNAME: $(tf-sql-server-admin-username)
+  #             TF_VAR_SQL_SERVER_PASSWORD: $(tf-sql-server-admin-password)
+
+  #         - bash: |
+  #             terraform apply "tfplan"
+  #           displayName: "terraform apply"
+  #           workingDirectory: "$(Build.SourcesDirectory)/build"
+  #           env:
+  #             ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
+  #             ARM_TENANT_ID: $(tf-tenant-id)
+  #             ARM_CLIENT_ID: $(tf-client-id)
+  #             ARM_CLIENT_SECRET: $(tf-client-secret)
+  #             ARM_ACCESS_KEY: $(tf-access-key)
+  #             TF_VAR_SQL_SERVER_USERNAME: $(tf-sql-server-admin-username)
+  #             TF_VAR_SQL_SERVER_PASSWORD: $(tf-sql-server-admin-password)
+
+  # - stage: publish
+  #   displayName: copy packaged project to azure infrastructure
+  #   dependsOn: 
+  #   - package
+  #   - azure
+  #   jobs:
+  #     - job: Azure_WebApp 
+  #       steps:
+  #       - download: none
+  #       - task: DownloadPipelineArtifact@2
+  #         displayName: 'Download Service'
+  #         inputs:
+  #           artifact: project
+  #           path: $(Pipeline.Workspace)/artifacts/
+  #       - task: AzureWebApp@1
+  #         inputs:
+  #           azureSubscription: "Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)"
+  #           appName: "battleships-users-web-api"
+  #           package: "$(Pipeline.Workspace)/**/*.zip"
