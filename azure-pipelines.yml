@@ -9,7 +9,7 @@ stages:
     displayName: dotnet build api
     dependsOn: []
     variables:
-      buildConfiguration: "Release"
+      buildConfiguration: 'Release'
     jobs:
       - job: dotnet
         container: ukhydrographicoffice/dotnetcore60-zip:latest
@@ -18,17 +18,17 @@ stages:
           - task: DotNetCoreCLI@2
             displayName: 'dotnet test'
             inputs:
-              command: "test"
-              projects: "/*.Tests/*.csproj"
-              arguments: "--configuration $(buildConfiguration)"
+              command: 'test'
+              projects: '**/*Tests/*.csproj'
+              arguments: '--configuration $(buildConfiguration)'
 
           - task: DotNetCoreCLI@2
             displayName: 'dotnet publish'
             inputs:
-              command: "publish"
+              command: 'publish'
               publishWebProjects: true
-              projects: "**/*.csproj"
-              arguments: "--configuration $(buildConfiguration)"
+              projects: '**/*.csproj'
+              arguments: '--configuration $(buildConfiguration)'
               zipAfterPublish: true
 
           - task: CopyFiles@2
@@ -58,8 +58,8 @@ stages:
   #         #Initialise terraform using manually defined project secrets (variables in Battleships Terraform Secrets). Gives terraform access and location to store .tfstate file in azure blob storage.
   #         - bash: |
   #             terraform init
-  #           displayName: "terraform init"
-  #           workingDirectory: "$(Build.SourcesDirectory)/build"
+  #           displayName: 'terraform init'
+  #           workingDirectory: '$(Build.SourcesDirectory)/build'
   #           env:
   #             ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
   #             ARM_TENANT_ID: $(tf-tenant-id)
@@ -71,8 +71,8 @@ stages:
 
   #         - bash: |
   #             terraform plan -input=false -out=tfplan
-  #           displayName: "terraform plan"
-  #           workingDirectory: "$(Build.SourcesDirectory)/build"
+  #           displayName: 'terraform plan'
+  #           workingDirectory: '$(Build.SourcesDirectory)/build'
   #           env:
   #             ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
   #             ARM_TENANT_ID: $(tf-tenant-id)
@@ -83,9 +83,9 @@ stages:
   #             TF_VAR_SQL_SERVER_PASSWORD: $(tf-sql-server-admin-password)
 
   #         - bash: |
-  #             terraform apply "tfplan"
-  #           displayName: "terraform apply"
-  #           workingDirectory: "$(Build.SourcesDirectory)/build"
+  #             terraform apply 'tfplan'
+  #           displayName: 'terraform apply'
+  #           workingDirectory: '$(Build.SourcesDirectory)/build'
   #           env:
   #             ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
   #             ARM_TENANT_ID: $(tf-tenant-id)
@@ -111,6 +111,6 @@ stages:
   #           path: $(Pipeline.Workspace)/artifacts/
   #       - task: AzureWebApp@1
   #         inputs:
-  #           azureSubscription: "Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)"
-  #           appName: "battleships-users-web-api"
-  #           package: "$(Pipeline.Workspace)/**/*.zip"
+  #           azureSubscription: 'Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)'
+  #           appName: 'battleships-users-web-api'
+  #           package: '$(Pipeline.Workspace)/**/*.zip'
