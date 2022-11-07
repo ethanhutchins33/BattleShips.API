@@ -16,14 +16,14 @@ stages:
         steps:
         
           - task: DotNetCoreCLI@2
-            displayName: run tests
+            displayName: 'dotnet test'
             inputs:
               command: "test"
-              projects: "**/*Tests/*.csproj"
+              projects: "/*.Tests/*.csproj"
               arguments: "--configuration $(buildConfiguration)"
 
           - task: DotNetCoreCLI@2
-            displayName: "dotnet publish"
+            displayName: 'dotnet publish'
             inputs:
               command: "publish"
               publishWebProjects: true
@@ -32,7 +32,7 @@ stages:
               zipAfterPublish: true
 
           - task: CopyFiles@2
-            displayName: 'Copy Files - api'
+            displayName: 'Copy project files to staging directory'
             inputs:
               SourceFolder: $(Build.SourcesDirectory)
               Contents: '**/publish.zip'
