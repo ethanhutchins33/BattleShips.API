@@ -13,8 +13,8 @@ public class Ship
 
     [ForeignKey("ShipTypeId")]
     public ShipType ShipType { get; set; }
-
     public int ShipTypeId { get; set; }
+
     public byte PosX { get; set; }
     public byte PosY { get; set; }
     public bool IsVertical { get; set; }
