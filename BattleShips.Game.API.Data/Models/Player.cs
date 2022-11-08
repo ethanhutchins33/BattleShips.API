@@ -1,6 +1,9 @@
-﻿namespace BattleShips.Game.API.Data.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BattleShips.Game.API.Data.Models;
 public class Player
 {
-    public Player Id { get; set; }
+    [Key]
+    public int Id { get; set; }
     public string UserName { get; set; }
 }

@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API", "Bat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API.Tests", "BattleShips.Game.API.Tests\BattleShips.Game.API.Tests.csproj", "{7FC656FB-8624-4414-9653-9212EB087570}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API.Library", "BattleShips.Game.API.Library\BattleShips.Game.API.Library.csproj", "{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5761B1FD-2742-44B4-9043-3DD39B3C0043}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -21,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A4560E28
 		azure-pipelines.yml = azure-pipelines.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattleShips.Game.API.Data", "BattleShips.Game.API.Data\BattleShips.Game.API.Data.csproj", "{F2B5F380-DE1F-4220-BDFF-F23DDF081BA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.Game.API.Data", "BattleShips.Game.API.Data\BattleShips.Game.API.Data.csproj", "{F2B5F380-DE1F-4220-BDFF-F23DDF081BA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +35,6 @@ Global
 		{7FC656FB-8624-4414-9653-9212EB087570}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FC656FB-8624-4414-9653-9212EB087570}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FC656FB-8624-4414-9653-9212EB087570}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EFC54EA6-FAE5-4A50-85BF-90B6E6E66980}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2B5F380-DE1F-4220-BDFF-F23DDF081BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2B5F380-DE1F-4220-BDFF-F23DDF081BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2B5F380-DE1F-4220-BDFF-F23DDF081BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
