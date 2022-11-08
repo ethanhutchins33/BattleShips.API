@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BattleShips.Game.API.Data\BattleShips.Game.API.Data.csproj" />
+  </ItemGroup>
+
 </Project>
