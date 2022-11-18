@@ -8,13 +8,13 @@
 
 // internal class GameControllerTests
 // {
-//     private IGameRepository _fakeGameRepository;
+//     private IRepository _fakeGameRepository;
 //     private GameController _sut;
 
 //     [SetUp]
 //     public void Setup()
 //     {
-//         _fakeGameRepository = A.Fake<IGameRepository>();
+//         _fakeGameRepository = A.Fake<IRepository>();
 
 //         _sut = new GameController(_fakeGameRepository);
 //     }

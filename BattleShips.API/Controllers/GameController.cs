@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BattleShips.API.Data.DataAccess;
 using BattleShips.API.Data.Models;
+using BattleShips.API.Data.Access;
 
 namespace BattleShips.API.Controllers;
 
@@ -8,17 +8,17 @@ namespace BattleShips.API.Controllers;
 [Route("api/[controller]")]
 public class GameController : ControllerBase
 {
-    private readonly IGameRepository _gameRepository;
+    private readonly IRepository<Game> _repository;
 
-    public GameController(IGameRepository gameRepository)
+    public GameController(IRepository<Game> repository)
     {
-        _gameRepository = gameRepository;
+        _repository = repository;
     }
 
     [HttpGet("id")]
     public async Task<ActionResult<Game>> GetGame(int id)
     {
-        var result = await _gameRepository.GetGameAsync(id);
+        var result = await _repository.Get(id);
 
         if (result == null)
         {
@@ -31,7 +31,7 @@ public class GameController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Game>> CreateGame(Player player)
     {
-        await _gameRepository.AddGameAsync(new Game
+        await _repository.Add(new Game
         {
             DateCreated = DateTime.Now,
             Player1 = new Player{UserName = player.UserName},
@@ -48,7 +48,7 @@ public class GameController : ControllerBase
             return BadRequest();
         }
 
-        Game dbGame = await _gameRepository.UpdateGameAsync(game);
+        Game dbGame = await _repository.Update(game);
 
         if (dbGame == null)
         {
