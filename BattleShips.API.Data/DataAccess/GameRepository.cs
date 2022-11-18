@@ -11,8 +11,6 @@ public class GameRepository : IGameRepository
         _db = db;
     }
 
-    #region Game
-
     public async Task<Game> GetGameAsync(int id)
     {
         try
@@ -80,23 +78,5 @@ public class GameRepository : IGameRepository
 
     }
 
-    #endregion Game
-
-    #region Player
-
-    
-
-    #endregion Player
-
-
-    #region Board
-
-
-    #endregion Board
-
-
-    #region Ship
-
-
-    #endregion Ship
+  
 }
