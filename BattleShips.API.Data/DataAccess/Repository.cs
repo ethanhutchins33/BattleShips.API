@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace BattleShips.API.Data.DataAccess;
-public class GameRepository : IGameRepository
+public class Repository : IRepository
 {
     private readonly GameContext _db;
 
-    public GameRepository(GameContext db)
+    public Repository(GameContext db)
     {
         _db = db;
     }

@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddDbContext<GameContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("Game-DbContext"));
