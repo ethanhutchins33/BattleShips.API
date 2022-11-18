@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BattleShips.Game.API.Data.DataAccess;
-using BattleShips.Game.API.Data.Models;
+using BattleShips.API.Data.DataAccess;
+using BattleShips.API.Data.Models;
 
-namespace BattleShips.Game.API.Controllers;
+namespace BattleShips.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -16,15 +16,15 @@ public class GameController : ControllerBase
     }
 
     [HttpGet("id")]
-    public async Task<ActionResult<Data.Models.Game>> GetGame(int id)
+    public async Task<ActionResult<Game>> GetGame(int id)
     {
         return Ok(await _gameRepository.GetGameAsync(id));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Data.Models.Game>> CreateGame(Player player)
+    public async Task<ActionResult<Game>> CreateGame(Player player)
     {
-        await _gameRepository.CreateGameAsync(new Data.Models.Game
+        await _gameRepository.CreateGameAsync(new Game
         {
             DateCreated = DateTime.Now,
             Player1 = new Player{UserName = player.UserName},
@@ -34,14 +34,14 @@ public class GameController : ControllerBase
     }
 
     [HttpPut("id")]
-    public async Task<IActionResult> UpdateAuthor(int id, Data.Models.Game game)
+    public async Task<IActionResult> UpdateAuthor(int id, Game game)
     {
         if (id != game.Id)
         {
             return BadRequest();
         }
 
-        Data.Models.Game dbGame = await _gameRepository.UpdateGameAsync(game);
+        Game dbGame = await _gameRepository.UpdateGameAsync(game);
 
         if (dbGame == null)
         {

@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BattleShips.API.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace BattleShips.Game.API.Data.DataAccess;
+namespace BattleShips.API.Data.DataAccess;
 public class GameRepository : IGameRepository
 {
     private readonly GameContext _db;
@@ -10,9 +11,9 @@ public class GameRepository : IGameRepository
         _db = db;
     }
 
-    #region Models.Game
+    #region Game
 
-    public async Task<Models.Game> GetGameAsync(int id)
+    public async Task<Game> GetGameAsync(int id)
     {
         try
         {
@@ -25,7 +26,7 @@ public class GameRepository : IGameRepository
 
     }
 
-    public async Task<Models.Game> CreateGameAsync(Models.Game game)
+    public async Task<Game> CreateGameAsync(Game game)
     {
         try
         {
@@ -40,7 +41,7 @@ public class GameRepository : IGameRepository
 
     }
 
-    public async Task<Models.Game> UpdateGameAsync(Models.Game game)
+    public async Task<Game> UpdateGameAsync(Game game)
     {
         try
         {
@@ -56,7 +57,7 @@ public class GameRepository : IGameRepository
 
     }
 
-    public async Task<(bool, string)> DeleteGameAsync(Models.Game game)
+    public async Task<(bool, string)> DeleteGameAsync(Game game)
     {
         try
         {
@@ -79,7 +80,7 @@ public class GameRepository : IGameRepository
 
     }
 
-    #endregion Models.Game
+    #endregion Game
 
     #region Player
 

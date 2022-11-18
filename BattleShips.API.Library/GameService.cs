@@ -1,6 +1,6 @@
-﻿using BattleShips.Game.API.Library.Interfaces;
+﻿using BattleShips.API.Library.Interfaces;
 
-namespace BattleShips.Game.API.Library;
+namespace BattleShips.API.Library;
 
 public class GameService : IGameService
 {

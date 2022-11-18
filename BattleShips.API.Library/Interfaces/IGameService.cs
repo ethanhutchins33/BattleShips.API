@@ -1,4 +1,4 @@
-﻿namespace BattleShips.Game.API.Library.Interfaces;
+﻿namespace BattleShips.API.Library.Interfaces;
 
 public interface IGameService
 {

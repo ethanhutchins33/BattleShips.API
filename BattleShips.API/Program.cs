@@ -1,4 +1,4 @@
-using BattleShips.Game.API.Data.DataAccess;
+using BattleShips.API.Data.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

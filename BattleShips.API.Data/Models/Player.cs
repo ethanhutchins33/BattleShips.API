@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BattleShips.Game.API.Data.Models;
+namespace BattleShips.API.Data.Models;
 public class Player
 {
     [Key]

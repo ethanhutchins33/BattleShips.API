@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BattleShips.Game.API\BattleShips.Game.API.csproj" />
+    <ProjectReference Include="..\BattleShips.API\BattleShips.API.csproj" />
   </ItemGroup>
 
 </Project>

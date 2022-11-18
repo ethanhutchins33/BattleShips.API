@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BattleShips.Game.API.Data\BattleShips.Game.API.Data.csproj" />
+    <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj" />
   </ItemGroup>
 
 </Project>
