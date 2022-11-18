@@ -2,8 +2,10 @@
 namespace BattleShips.Game.API.Data.DataAccess;
 public interface IGameRepository
 {
-    public void CreateGame();
-    public Models.Game ReturnGame(int gameId);
-    public void UpdateGame();
-    public void DeleteGame();
+    Task<Models.Game> GetGameAsync(int id);
+    Task<Models.Game> CreateGameAsync(Models.Game game);
+    Task<Models.Game> UpdateGameAsync(Models.Game game);
+    Task<(bool, string)> DeleteGameAsync(Models.Game game);
+    
+
 }

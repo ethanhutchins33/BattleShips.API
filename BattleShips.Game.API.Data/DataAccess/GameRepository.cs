@@ -1,44 +1,101 @@
-﻿
-using BattleShips.Game.API.Data.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BattleShips.Game.API.Data.DataAccess;
 public class GameRepository : IGameRepository
 {
-    private readonly GameContext _gameContext;
+    private readonly GameContext _db;
 
-    public GameRepository(GameContext gameContext)
+    public GameRepository(GameContext db)
     {
-        _gameContext = gameContext;
+        _db = db;
     }
 
+    #region Models.Game
 
-    public void CreateGame()
+    public async Task<Models.Game> GetGameAsync(int id)
     {
-        _gameContext.Games.Add(new Models.Game
+        try
         {
-            DateCreated = DateTime.Now,
-            Player1 = new Player{UserName = "userA"},
-            Player2 = new Player{UserName = "userB" },
-            PlayerWinner = null,
-        });
+            return await _db.Games.FirstOrDefaultAsync(game => game.Id == id);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
 
-        _gameContext.SaveChanges();
     }
 
-    public Models.Game ReturnGame(int gameId)
+    public async Task<Models.Game> CreateGameAsync(Models.Game game)
     {
-        var gameToReturn = _gameContext.Games.FirstOrDefault(game => game.Id == gameId);
+        try
+        {
+            await _db.Games.AddAsync(game);
+            await _db.SaveChangesAsync();
+            return await _db.Games.FindAsync(game.Id);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
 
-        return gameToReturn;
     }
 
-    public void UpdateGame()
+    public async Task<Models.Game> UpdateGameAsync(Models.Game game)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _db.Entry(game).State = EntityState.Modified;
+            await _db.SaveChangesAsync();
+
+            return game;
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+
     }
 
-    public void DeleteGame()
+    public async Task<(bool, string)> DeleteGameAsync(Models.Game game)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var dbGame = await _db.Games.FindAsync(game.Id);
+
+            if (dbGame == null)
+            {
+                return (false, "Game could not be found");
+            }
+
+            _db.Games.Remove(game);
+            await _db.SaveChangesAsync();
+
+            return (true, "Game was deleted.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"An error occurred. Error Message: {ex.Message}");
+        }
+
     }
+
+    #endregion Models.Game
+
+    #region Player
+
+    
+
+    #endregion Player
+
+
+    #region Board
+
+
+    #endregion Board
+
+
+    #region Ship
+
+
+    #endregion Ship
 }
