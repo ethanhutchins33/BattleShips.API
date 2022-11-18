@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BattleShips.API.Data.Access;
 
 namespace BattleShips.API.Data.Models;
-public class Ship
+public class Ship : IEntity
 {
     [Key]
     public int Id { get; set; }

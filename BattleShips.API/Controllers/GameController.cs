@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using BattleShips.API.Data.DataAccess;
 using BattleShips.API.Data.Models;
+using BattleShips.API.Data.Access;
 
 namespace BattleShips.API.Controllers;
 
