@@ -1,5 +1,5 @@
 ﻿using BattleShips.Game.API.Controllers;
-using BattleShips.Game.API.Library.Interfaces;
+using BattleShips.Game.API.Data.DataAccess;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
@@ -8,15 +8,15 @@ namespace BattleShips.Game.API.Tests.Controllers;
 
 internal class GameControllerTests
 {
-    private IGameService _fakeGameService;
+    private IGameRepository _fakeGameRepository;
     private GameController _sut;
 
     [SetUp]
     public void Setup()
     {
-        _fakeGameService = A.Fake<IGameService>();
+        _fakeGameRepository = A.Fake<IGameRepository>();
 
-        _sut = new GameController(_fakeGameService);
+        _sut = new GameController(_fakeGameRepository);
     }
 
     [Test]
@@ -32,13 +32,13 @@ internal class GameControllerTests
     {
         _ = _sut.CreateGame();
 
-        A.CallTo(() => _fakeGameService.CreateNewGameId()).MustHaveHappened();
+        A.CallTo(() => _fakeGameRepository.CreateGame()).MustHaveHappened();
     }
 
     [Test]
     public void CreateGame_should_return_id_from_game_service()
     {
-        A.CallTo(() => _fakeGameService.CreateNewGameId()).Returns("abc");
+        A.CallTo(() => _fakeGameRepository.CreateGame()).Returns("abc");
 
         var response = _sut.CreateGame() as OkObjectResult;
 
