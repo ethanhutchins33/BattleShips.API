@@ -18,13 +18,20 @@ public class GameController : ControllerBase
     [HttpGet("id")]
     public async Task<ActionResult<Game>> GetGame(int id)
     {
-        return Ok(await _gameRepository.GetGameAsync(id));
+        var result = await _gameRepository.GetGameAsync(id);
+
+        if (result == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(result);
     }
 
     [HttpPost]
     public async Task<ActionResult<Game>> CreateGame(Player player)
     {
-        await _gameRepository.CreateGameAsync(new Game
+        await _gameRepository.AddGameAsync(new Game
         {
             DateCreated = DateTime.Now,
             Player1 = new Player{UserName = player.UserName},

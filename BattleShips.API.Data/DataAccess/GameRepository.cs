@@ -24,7 +24,7 @@ public class GameRepository : IGameRepository
 
     }
 
-    public async Task<Game> CreateGameAsync(Game game)
+    public async Task<Game> AddGameAsync(Game game)
     {
         try
         {
