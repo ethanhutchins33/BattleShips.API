@@ -37,7 +37,7 @@ public class GameService : IGameService
 
         if (game != null)
         {
-            game.Player2 = player;
+            game.Player2Id = player.Id;
             await _gameRepository.Update(game);
             return game;
         }
@@ -53,7 +53,7 @@ public class GameService : IGameService
         var result = await _gameRepository.Add(new Game
             {
                 DateCreated = DateTime.Now,
-                Player1 = new Player { UserName = player.UserName }
+                Player1Id = player.Id
             });
         
         return result ?? throw new InvalidOperationException();
@@ -64,8 +64,8 @@ public class GameService : IGameService
     {
         var result = await _boardRepository.Add(new Board
         {
-            Player = player,
-            Game = game,
+            PlayerId =player.Id,
+            GameId = game.Id,
         });
         return result ?? throw new InvalidOperationException();
 
