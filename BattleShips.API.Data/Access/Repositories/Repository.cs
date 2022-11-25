@@ -13,42 +13,56 @@ where TContext : DbContext
         _context = context;
     }
 
-    public async Task<TEntity> Add(TEntity entity)
+    public async Task<TEntity?> Add(TEntity? entity)
     {
         try
         {
-            _context.Set<TEntity>().Add(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+            if (entity != null)
+            {
+                _context.Set<TEntity>().Add(entity);
+                await _context.SaveChangesAsync();
+                var newRecordId = entity.Id;
+                return entity;
+            }
+        }
+        catch
+        {
+            return null;
+        }
+        
+        return null;
+    }
+
+    public IQueryable<TEntity>? GetAll()
+    {
+        try
+        {
+            return _context.Set<TEntity>().AsQueryable();
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public async Task<TEntity?> Get(int? id)
+    {
+        try
+        {
+            if (id != null)
+            {
+                return await _context.Set<TEntity>().FindAsync(id);
+            }
         }
         catch
         {
             return null;
         }
 
+        return null;
     }
 
-    public async Task<List<TEntity>> GetAll()
-    {
-        return await _context.Set<TEntity>().ToListAsync();
-    }
-
-    public async Task<TEntity> Get(int id)
-    {
-        try
-        {
-            return await _context.Set<TEntity>().FindAsync(id);
-        }
-        catch
-        {
-            return null;
-        }
-
-    }
-
-
-
-    public async Task<TEntity> Update(TEntity entity)
+    public async Task<TEntity?> Update(TEntity? entity)
     {
         try
         {
@@ -63,27 +77,26 @@ where TContext : DbContext
 
     }
 
-    public async Task<TEntity> Delete(int id)
+    public async Task<TEntity?> Delete(int? id)
     {
         try
         {
-            var entity = await _context.Set<TEntity>().FindAsync(id);
-
-            if (entity == null)
+            if (id != null)
             {
-                return null;
+                var entity = await _context.Set<TEntity>().FindAsync(id);
+
+                _context.Set<TEntity>().Remove(entity);
+                await _context.SaveChangesAsync();
+
+                return entity;
             }
-
-            _context.Set<TEntity>().Remove(entity);
-            await _context.SaveChangesAsync();
-
-            return entity;
         }
         catch
         {
             return null;
         }
 
+        return null;
     }
 
 }

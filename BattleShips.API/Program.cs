@@ -1,6 +1,7 @@
 using BattleShips.API.Data.Access;
 using BattleShips.API.Data.Access.Repositories;
 using BattleShips.API.Data.Models;
+using BattleShips.API.Library;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,7 @@ builder.Services.AddScoped<IRepository<Board>, BoardRepository>();
 builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
 builder.Services.AddScoped<IRepository<Ship>, ShipRepository>();
 builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
+builder.Services.AddScoped<IGameService, GameService>();
 
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {

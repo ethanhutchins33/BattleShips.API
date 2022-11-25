@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BattleShips.API.Data.Models;
-using BattleShips.API.Data.Access;
+using BattleShips.API.Library;
 
 namespace BattleShips.API.Controllers;
 
@@ -8,54 +8,45 @@ namespace BattleShips.API.Controllers;
 [Route("api/[controller]")]
 public class GameController : ControllerBase
 {
-    private readonly IRepository<Game> _repository;
+    private readonly IGameService _gameService;
 
-    public GameController(IRepository<Game> repository)
+    public GameController(IGameService gameService)
     {
-        _repository = repository;
-    }
-
-    [HttpGet("id")]
-    public async Task<ActionResult<Game>> GetGame(int id)
-    {
-        var result = await _repository.Get(id);
-
-        if (result == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(result);
+        _gameService = gameService;
     }
 
     [HttpPost]
     public async Task<ActionResult<Game>> CreateGame(Player player)
     {
-        await _repository.Add(new Game
-        {
-            DateCreated = DateTime.Now,
-            Player1 = new Player{UserName = player.UserName},
-        });
+        var result = await _gameService.CreateGame(player);
 
-        return Ok();
+        return Ok(result);
     }
 
-    [HttpPut("id")]
-    public async Task<IActionResult> UpdateAuthor(int id, Game game)
-    {
-        if (id != game.Id)
-        {
-            return BadRequest();
-        }
+    //[HttpGet("id")]
+    //public async Task<ActionResult<Game>> GetGame(int id)
+    //{
 
-        Game dbGame = await _repository.Update(game);
 
-        if (dbGame == null)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, $"Game with Id: {game.Id} could not be updated");
-        }
+    //    return Ok();
+    //}
 
-        return NoContent();
-    }
+    //[HttpPut("id")]
+    //public async Task<IActionResult> UpdateGame(int id, Game? game)
+    //{
+    //    if (game != null && id != game.Id)
+    //    {
+    //        return BadRequest();
+    //    }
+
+    //    Game? dbGame = await _repository.Update(game);
+
+    //    if (dbGame == null)
+    //    {
+    //        return StatusCode(StatusCodes.Status500InternalServerError, $"Game with Id: {id} could not be updated");
+    //    }
+
+    //    return Ok(dbGame);
+    //}
 
 }
