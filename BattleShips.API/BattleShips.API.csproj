@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj" />
+    <ProjectReference Include="..\BattleShips.API.Library\BattleShips.API.Library.csproj" />
   </ItemGroup>
 
 </Project>
