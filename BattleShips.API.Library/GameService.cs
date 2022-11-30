@@ -28,7 +28,6 @@ public class GameService : IGameService
     public async Task<Game> SetupNewGame(int playerId)
     {
         var player = await _playerRepository.Get(playerId);
-
         var newGame = await CreateGame(player);
         await AddBoard(player, newGame);
 

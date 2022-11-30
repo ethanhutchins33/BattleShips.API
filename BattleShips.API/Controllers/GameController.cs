@@ -18,13 +18,13 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CreateGameResponseDto>> CreateGame(CreateGameDto dto)
+    public async Task<ActionResult<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto)
     {
         //TODO validate dto
 
-        var result = await _gameService.SetupNewGame(dto.HostPlayerId);
+        var newGame = await _gameService.SetupNewGame(createGameDto.HostPlayerId);
 
-        return Ok(new CreateGameResponseDto{GameId = result.Id});
+        return Ok(new CreateGameResponseDto{GameId = newGame.Id});
     }
 
 
