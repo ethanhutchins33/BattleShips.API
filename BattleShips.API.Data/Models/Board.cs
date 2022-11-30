@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using BattleShips.API.Data.Access;
 
 namespace BattleShips.API.Data.Models;

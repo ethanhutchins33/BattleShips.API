@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BattleShips.API.Data.Models;
 using BattleShips.API.Library;
+using BattleShips.API.Library.Requests;
+using BattleShips.API.Library.Response;
 
 namespace BattleShips.API.Controllers;
 
@@ -16,23 +18,34 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Game>> CreateGame(Player player)
+    public async Task<ActionResult<CreateGameResponseDto>> CreateGame(CreateGameDto dto)
     {
-        var result = await _gameService.CreateGame(player);
+        //TODO validate dto
 
-        return Ok(result);
+        var result = await _gameService.SetupNewGame(dto.HostPlayerId);
+
+        return Ok(new CreateGameResponseDto{GameId = result.Id});
     }
 
+
+    //TODO JOIN GAME
+
+    //TODO ADD SHIPS
+
+    //TODO START GAME (after 5 ships in each board)
+
+    //TODO FIRE AT SHIPS
+
+    //TODO GETGAMESTATE => who's turn, winnerBool, list of shots so far
+
     //[HttpGet("id")]
-    //public async Task<ActionResult<Game>> GetGame(int id)
+    //public async Task<ActionResult<Game>> GetGame(Player id)
     //{
-
-
     //    return Ok();
     //}
 
     //[HttpPut("id")]
-    //public async Task<IActionResult> UpdateGame(int id, Game? game)
+    //public async Task<IActionResult> UpdateGame(Player id, Game? game)
     //{
     //    if (game != null && id != game.Id)
     //    {

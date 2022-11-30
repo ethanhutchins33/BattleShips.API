@@ -25,10 +25,14 @@ public class GameService : IGameService
         _shipTypeRepository = shipTypeRepository;
     }
 
-    public async void SetupNewGame(Player player)
+    public async Task<Game> SetupNewGame(int playerId)
     {
+        var player = await _playerRepository.Get(playerId);
+
         var newGame = await CreateGame(player);
         await AddBoard(player, newGame);
+
+        return newGame;
     }
 
     public async Task<Game?> AddPlayerToGame(Player player, int gameId)
@@ -48,7 +52,7 @@ public class GameService : IGameService
 
     }
 
-    public async Task<Game> CreateGame(Player player)
+    private async Task<Game> CreateGame(Player player)
     {
         var result = await _gameRepository.Add(new Game
             {
@@ -56,7 +60,7 @@ public class GameService : IGameService
                 Player1Id = player.Id
             });
         
-        return result ?? throw new InvalidOperationException();
+        return result;
 
     }
 
