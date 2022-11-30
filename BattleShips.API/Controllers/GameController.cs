@@ -7,7 +7,7 @@ using BattleShips.API.Library.Response;
 namespace BattleShips.API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api")]
 public class GameController : ControllerBase
 {
     private readonly IGameService _gameService;
@@ -18,6 +18,7 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
+    [Route("create")]
     public async Task<ActionResult<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto)
     {
         //TODO validate dto
