@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
 using BattleShips.API.Library;
 using BattleShips.API.Library.Requests;
 using BattleShips.API.Library.Response;
