@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "rg" {
-  name     = "battleships-users-api-rg"
+  name     = "battleships-api-rg"
   location = "westeurope"
 }
 
@@ -14,7 +14,7 @@ resource "azurerm_app_service_plan" "appserviceplan" {
 }
 
 resource "azurerm_app_service" "webapp" {
-  name                = "battleships-users-web-api"
+  name                = "battleships-api"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.appserviceplan.id
@@ -26,14 +26,14 @@ resource "azurerm_app_service" "webapp" {
   }
 
   connection_string {
-    name = "Users-Database"
+    name = "Db-ConnString"
     type = "SQLAzure"
     value = "Server=tcp:${azurerm_mssql_server.sql-server.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_mssql_database.sql-db.name};Persist Security Info=False;User ID=${azurerm_mssql_server.sql-server.administrator_login};Password=${azurerm_mssql_server.sql-server.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
  }
 }
 
 resource "azurerm_mssql_server" "sql-server" {
-  name                         = "battleships-users-sql-server"
+  name                         = "battleships-sql-server"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
@@ -46,7 +46,7 @@ resource "azurerm_mssql_server" "sql-server" {
 }
 
 resource "azurerm_mssql_database" "sql-db" {
-  name                        = "battleships-users-sql-db"
+  name                        = "battleships-sql-db"
   server_id                   = azurerm_mssql_server.sql-server.id
   max_size_gb                 = 8
   min_capacity                = 0.5
