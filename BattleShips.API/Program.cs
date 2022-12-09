@@ -2,7 +2,10 @@ using BattleShips.API.Data.Access;
 using BattleShips.API.Data.Access.Repositories;
 using BattleShips.API.Data.Models;
 using BattleShips.API.Library;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +22,14 @@ builder.Services.AddScoped<IRepository<Ship>, ShipRepository>();
 builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Game-DbContext"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Db-ConnString"));
 });
 
 var app = builder.Build();
@@ -29,6 +37,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
+    dbContext.Database.EnsureDeleted();
     dbContext.Database.EnsureCreated();
 }
 
@@ -39,8 +48,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors((a) => a.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((b) => true).AllowCredentials());
+
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
