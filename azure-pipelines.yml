@@ -58,7 +58,7 @@ stages:
           - bash: |
               terraform init
             displayName: "terraform init"
-            workingDirectory: "$(Build.SourcesDirectory)/build"
+            workingDirectory: "$(Build.SourcesDirectory)/Build"
             env:
               ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
               ARM_TENANT_ID: $(tf-tenant-id)
