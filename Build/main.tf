@@ -33,7 +33,7 @@ resource "azurerm_app_service" "webapp" {
 }
 
 resource "azurerm_mssql_server" "sql-server" {
-  name                         = "battleships-sql-server"
+  name                         = "bs-sql-server"
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
@@ -46,7 +46,7 @@ resource "azurerm_mssql_server" "sql-server" {
 }
 
 resource "azurerm_mssql_database" "sql-db" {
-  name                        = "battleships-sql-db"
+  name                        = "bs-sql-db"
   server_id                   = azurerm_mssql_server.sql-server.id
   max_size_gb                 = 8
   min_capacity                = 0.5
