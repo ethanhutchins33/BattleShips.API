@@ -71,7 +71,7 @@ stages:
           - bash: |
               terraform plan -input=false -out=tfplan
             displayName: "terraform plan"
-            workingDirectory: "$(Build.SourcesDirectory)/build"
+            workingDirectory: "$(Build.SourcesDirectory)/Build"
             env:
               ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
               ARM_TENANT_ID: $(tf-tenant-id)
@@ -84,7 +84,7 @@ stages:
           - bash: |
               terraform apply 'tfplan'
             displayName: "terraform apply"
-            workingDirectory: "$(Build.SourcesDirectory)/build"
+            workingDirectory: "$(Build.SourcesDirectory)/Build"
             env:
               ARM_SUBSCRIPTION_ID: $(tf-subscription-id)
               ARM_TENANT_ID: $(tf-tenant-id)
