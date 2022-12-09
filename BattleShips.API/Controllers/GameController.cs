@@ -6,7 +6,7 @@ using BattleShips.API.Library.Response;
 namespace BattleShips.API.Controllers;
 
 [ApiController]
-[Route("api")]
+[Route("api/game")]
 public class GameController : ControllerBase
 {
     private readonly IGameService _gameService;
@@ -29,6 +29,25 @@ public class GameController : ControllerBase
 
 
     //TODO JOIN GAME
+    [HttpPost]
+    [Route("join/{gameId}")]
+    public async Task<ActionResult<JoinGameResponseDto>> JoinGame(JoinGameDto joinGameDto, int gameId)
+    {
+        var game = await _gameService.AddPlayerToGame(joinGameDto.JoiningPlayerId, gameId);
+
+        if (game == null)
+        {
+            return NoContent();
+        }
+
+        return Ok(new JoinGameResponseDto
+        {
+            GameId = game.Id,
+            HostPlayerId = game.Player1Id,
+            GuestPlayerId = game.Player2Id,
+        });
+
+    }
 
     //TODO ADD SHIPS
 
