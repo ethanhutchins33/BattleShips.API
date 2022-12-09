@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_app_service_plan" "appserviceplan" {
-  name = "eh-battleships-service-plan"
+  name = "battleships-service-plan"
   location = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku {
