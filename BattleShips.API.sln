@@ -17,11 +17,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A4560E28-5986-43F3-BA25-D6C3D25DFF35}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
+		Build\backend.tf = Build\backend.tf
+		Build\main.tf = Build\main.tf
+		Build\variables.tf = Build\variables.tf
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.API.Data", "BattleShips.API.Data\BattleShips.API.Data.csproj", "{F2B5F380-DE1F-4220-BDFF-F23DDF081BA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BattleShips.API.Library", "BattleShips.API.Library\BattleShips.API.Library.csproj", "{AD77B829-F0C1-4E9B-BB5E-6D710034FB03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BattleShips.API.Library", "BattleShips.API.Library\BattleShips.API.Library.csproj", "{AD77B829-F0C1-4E9B-BB5E-6D710034FB03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
