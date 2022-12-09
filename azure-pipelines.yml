@@ -49,7 +49,7 @@ stages:
     displayName: run terraform scripts
     dependsOn: []
     variables:
-      - group: BattleShips.API.Secrets
+      - group: BattleShipsSecrets
     jobs:
       - job: terraform
         container: ukhydrographicoffice/terraform-azure-powershell:latest
