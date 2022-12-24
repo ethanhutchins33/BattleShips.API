@@ -43,7 +43,7 @@ stages:
           - task: PublishBuildArtifacts@1
             displayName: "Publish Artifact: project"
             inputs:
-              ArtifactName: project
+              ArtifactName: Battleships.API
 
   - stage: azure
     displayName: run terraform scripts
@@ -102,12 +102,11 @@ stages:
     jobs:
       - job: Azure_WebApp
         steps:
-          - download: none
-          - task: DownloadPipelineArtifact@2
-            displayName: "Download Service"
-            inputs:
-              artifact: project
-              path: $(Pipeline.Workspace)/artifacts/
+          - download: current
+            displayName: Download Project Artifact
+            artifact: Battleships.API
+            patterns: '*'
+            
           - task: AzureWebApp@1
             inputs:
               azureSubscription: "Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)"
