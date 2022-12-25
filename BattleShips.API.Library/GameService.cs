@@ -25,18 +25,20 @@ public class GameService : IGameService
         _shipTypeRepository = shipTypeRepository;
     }
 
-    public async Task<Game> SetupNewGame(int playerId)
+    public async Task<Game?> SetupNewGame(int playerId)
     {
-        var player = await _playerRepository.Get(playerId) ?? 
-                     await _playerRepository.Add(new Player
-        {
-            UserName = "test",
-        });
+        var player = await _playerRepository.Get(playerId);
 
+        if (player == null) return null;
+        
         var newGame = await CreateGame(player);
+        
+        if (newGame == null) return null;
+        
         await AddBoard(player.Id, newGame.Id);
 
         return newGame;
+
     }
 
     public async Task<Game?> AddPlayerToGame(int joiningPlayerId, int gameId)
@@ -59,43 +61,45 @@ public class GameService : IGameService
                          UserName = "P2UserName",
                      });
 
+        if (player == null) return game;
+        
         game.Player2Id = player.Id;
         await _gameRepository.Update(game);
         await AddBoard(player.Id, gameId);
+
         return game;
     }
 
-    private async Task<Game> CreateGame(Player player)
+    private async Task<Game?> CreateGame(IEntity player)
     {
+        var newGameCode = GenerateRandomCode();
         var result = await _gameRepository.Add(new Game
             {
                 DateCreated = DateTime.Now,
-                Player1Id = player.Id
+                Player1Id = player.Id,
+                GameCode = GenerateRandomCode(),
             });
         
         return result;
 
     }
 
-    public async Task<Board> AddBoard(int playerId, int gameId)
+    public async Task<Board?> AddBoard(int playerId, int gameId)
     {
         var board = GetBoard(playerId, gameId);
 
-        if (board == null)
-        {
-            var result = await _boardRepository.Add(new Board
-            {
-                PlayerId = playerId,
-                GameId = gameId,
-            });
-            return result;
-        }
-
-        return board;
+        if (board != null) return board;
         
+        var newBoard = await _boardRepository.Add(new Board
+        {
+            PlayerId = playerId,
+            GameId = gameId,
+        });
+        return newBoard;
+
     }
 
-    public async Task AddShipToBoard(Ship ship, int gameId, int playerId)
+    public async Task<Ship?> AddShipToBoard(Ship? ship, int gameId, int playerId)
     {
         await _shipRepository.Add(ship);
 
@@ -103,36 +107,27 @@ public class GameService : IGameService
 
         if (board != null)
         {
-            ship.BoardId = board.Id;
+            if (ship != null)
+            {
+                ship.BoardId = board.Id;
+            }
         }
 
-        await _shipRepository.Update(ship);
+        return await _shipRepository.Update(ship);
     }
 
-    public async Task<string?> GetPlayerUserNameById(int? playerId)
+    private static string GenerateRandomCode()
     {
-        var player = await _playerRepository.Get(playerId);
-
-        if (player != null && player.UserName != null)
-        {
-            return player.UserName;
-        }
-
-        return null;
-    }
-
-    private string GenerateRandomCode()
-    {
-        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         var stringChars = new char[8];
         var random = new Random();
 
-        for (int i = 0; i < stringChars.Length; i++)
+        for (var i = 0; i < stringChars.Length; i++)
         {
             stringChars[i] = chars[random.Next(chars.Length)];
         }
 
-        return new String(stringChars);
+        return new string(stringChars);
     }
 
     private Board? GetBoard(int playerId, int gameId)
@@ -141,11 +136,6 @@ public class GameService : IGameService
 
         var board = boards?.FirstOrDefault(x => x.GameId == gameId && x.PlayerId == playerId);
 
-        if (board == null)
-        {
-            return null;
-        }
-
-        return board;
+        return board ?? null;
     }
 }

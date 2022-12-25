@@ -7,6 +7,7 @@ public class Game : IEntity
 {
     [Key]
     public int Id { get; set; }
+    public string? GameCode { get; set; }
     public DateTime DateCreated { get; set; }
     public int? Player1Id { get; set; }
     public int? Player2Id { get; set; }

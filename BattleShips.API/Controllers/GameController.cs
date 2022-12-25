@@ -24,13 +24,17 @@ public class GameController : ControllerBase
 
         var newGame = await _gameService.SetupNewGame(createGameDto.HostPlayerId);
 
-        return Ok(new CreateGameResponseDto{GameId = newGame.Id});
+        if (newGame != null)
+        {
+            return Ok(new CreateGameResponseDto { GameId = newGame.Id });
+        }
+        return BadRequest();
     }
 
 
     //TODO JOIN GAME
     [HttpPost]
-    [Route("join/{gameId}")]
+    [Route("join/{gameId:int}")]
     public async Task<ActionResult<JoinGameResponseDto>> JoinGame(JoinGameDto joinGameDto, int gameId)
     {
         var game = await _gameService.AddPlayerToGame(joinGameDto.JoiningPlayerId, gameId);
