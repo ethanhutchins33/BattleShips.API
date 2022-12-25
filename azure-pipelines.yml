@@ -39,11 +39,9 @@ stages:
               CleanTargetFolder: true
               OverWrite: true
               flattenFolders: true
-
-          - task: PublishBuildArtifacts@1
-            displayName: "Publish Artifact: project"
-            inputs:
-              ArtifactName: Battleships.API
+          
+          - publish: $(Build.ArtifactStagingDirectory)/**/*.zip"
+            artifact: Battleships.API
 
   - stage: azure
     displayName: run terraform scripts
@@ -105,7 +103,6 @@ stages:
           - download: current
             displayName: Download Project Artifact
             artifact: Battleships.API
-            patterns: '*'
             
           - task: AzureWebApp@1
             inputs:
@@ -113,3 +110,4 @@ stages:
               appName: "battleships-api"
               appType: "webApp"
               package: "$(Pipeline.Workspace)/**/*.zip"
+              deploymentMethod: 'auto'
