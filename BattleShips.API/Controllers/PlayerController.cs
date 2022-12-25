@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BattleShips.API.Data.Models;
+using BattleShips.API.Library;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
-using BattleShips.API.Data.Access;
-using BattleShips.API.Data.Models;
-using BattleShips.API.Library;
 
 namespace BattleShips.API.Controllers;
 
@@ -49,8 +48,4 @@ public class PlayerController : ControllerBase
 
         return Ok(_playerService.Get(Guid.Parse(newId)));
     }
-
-    //add friend
-
-    //remove friend
 }
