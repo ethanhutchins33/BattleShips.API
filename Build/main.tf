@@ -21,7 +21,7 @@ resource "azurerm_app_service" "webapp" {
   
   site_config {
     cors {
-      allowed_origins = ["https://battleshipsstaticsite.z6.web.core.windows.net"]
+      allowed_origins = ["https://bsstaticstorage.z6.web.core.windows.net/"]
     }
   }
 
