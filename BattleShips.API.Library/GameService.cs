@@ -56,10 +56,7 @@ public class GameService : IGameService
         }
         
         var player = await _playerRepository.Get(joiningPlayerId) ??
-                     await _playerRepository.Add(new Player
-                     {
-                         UserName = "P2UserName",
-                     });
+                     await _playerRepository.Add(new Player());
 
         if (player == null) return game;
         
