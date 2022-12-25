@@ -40,7 +40,7 @@ stages:
               OverWrite: true
               flattenFolders: true
           
-          - publish: $(Build.ArtifactStagingDirectory)/**/*.zip"
+          - publish: $(Build.ArtifactStagingDirectory)/*.zip"
             artifact: Battleships.API
 
   - stage: azure
