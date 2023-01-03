@@ -12,7 +12,7 @@ namespace BattleShips.API.Controllers;
 public class PlayerController : ControllerBase
 {
     private readonly IPlayerService _playerService;
-    private static readonly string[] Scope = { "users.api" };
+    private static readonly string[] Scope = { "battleships.api" };
 
     public PlayerController(IPlayerService playerService)
     {
