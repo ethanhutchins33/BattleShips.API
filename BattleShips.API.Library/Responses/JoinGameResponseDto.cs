@@ -1,7 +1,7 @@
-﻿namespace BattleShips.API.Library.Response;
+﻿namespace BattleShips.API.Library.Responses;
+
 public class JoinGameResponseDto
 {
-    public int GameId { get; set; }
     public int? HostPlayerId { get; set; }
     public int? GuestPlayerId { get; set; }
 }

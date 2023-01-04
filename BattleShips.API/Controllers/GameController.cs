@@ -1,32 +1,36 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BattleShips.API.Library;
 using BattleShips.API.Library.Requests;
-using BattleShips.API.Library.Response;
+using BattleShips.API.Library.Responses;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BattleShips.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/game")]
 public class GameController : ControllerBase
 {
     private readonly IGameService _gameService;
+    private readonly IPlayerService _playerService;
 
-    public GameController(IGameService gameService)
+    public GameController(IGameService gameService, IPlayerService playerService)
     {
         _gameService = gameService;
+        _playerService = playerService;
     }
 
     [HttpPost]
     [Route("create")]
-    public async Task<ActionResult<CreateGameResponseDto>> CreateGame(CreateGameDto createGameDto)
+    public async Task<ActionResult<CreateGameResponseDto>> CreateGame()
     {
         //TODO validate dto
-
-        var newGame = await _gameService.SetupNewGame(createGameDto.HostPlayerId);
+        var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
+        var newGame = await _gameService.SetupNewGame(_playerService.Get(Guid.Parse(azureId)).Id);
 
         if (newGame != null)
         {
-            return Ok(new CreateGameResponseDto { GameId = newGame.Id });
+            return Ok(new CreateGameResponseDto { GameId = newGame.Id, GameCode = newGame.GameCode });
         }
         return BadRequest();
     }
@@ -34,21 +38,24 @@ public class GameController : ControllerBase
 
     //TODO JOIN GAME
     [HttpPost]
-    [Route("join/{gameId:int}")]
-    public async Task<ActionResult<JoinGameResponseDto>> JoinGame(JoinGameDto joinGameDto, int gameId)
+    [Route("join/{gameCode}")]
+    public async Task<ActionResult<JoinGameResponseDto>> JoinGame(string gameCode)
     {
-        var game = await _gameService.AddPlayerToGame(joinGameDto.JoiningPlayerId, gameId);
+        var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
 
-        if (game == null)
+        var game = _gameService.GetGameByGameCode(gameCode);
+
+        var gameToReturn = await _gameService.AddPlayerToGame(_playerService.Get(Guid.Parse(azureId)).Id, game.Id);
+
+        if (gameToReturn == null)
         {
             return NoContent();
         }
 
         return Ok(new JoinGameResponseDto
         {
-            GameId = game.Id,
-            HostPlayerId = game.Player1Id,
-            GuestPlayerId = game.Player2Id,
+            HostPlayerId = gameToReturn.Player1Id,
+            GuestPlayerId = gameToReturn.Player2Id,
         });
 
     }

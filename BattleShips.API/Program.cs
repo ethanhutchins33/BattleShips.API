@@ -21,6 +21,7 @@ builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
 builder.Services.AddScoped<IRepository<Ship>, ShipRepository>();
 builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));

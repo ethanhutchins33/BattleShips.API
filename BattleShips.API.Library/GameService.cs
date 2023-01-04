@@ -67,6 +67,19 @@ public class GameService : IGameService
         return game;
     }
 
+    public Game? GetGameByGameCode(string gameCode)
+    {
+        var games = _gameRepository.GetAll();
+
+        if(games != null)
+        {
+            var game = games.FirstOrDefault(x => x.GameCode == gameCode);
+
+            return game;
+        }
+        return null;
+    }
+
     private async Task<Game?> CreateGame(IEntity player)
     {
         var newGameCode = GenerateRandomCode();
