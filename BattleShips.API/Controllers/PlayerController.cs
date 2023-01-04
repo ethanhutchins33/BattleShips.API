@@ -21,31 +21,19 @@ public class PlayerController : ControllerBase
 
     [HttpGet]
     [Route("get")]
-    public ActionResult<Player> Get()
+    public async Task<ActionResult<Player>> Get()
     {
         HttpContext.VerifyUserHasAnyAcceptedScope(Scope);
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
         var profileToReturn = _playerService.Get(Guid.Parse(azureId));
 
-        return Ok(profileToReturn);
-    }
-
-    [HttpPost]
-    [Route("add")]
-    public async Task<ActionResult<Player>> Add()
-    {
-        HttpContext.VerifyUserHasAnyAcceptedScope(Scope);
-
-        var newId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
-        var player = _playerService.Get(Guid.Parse(newId));
-
-        if (player != null)
+        if (profileToReturn != null)
         {
-            return Ok(player);
+            return Ok(profileToReturn);
         }
 
-        player = await _playerService.Add(Guid.Parse(newId));
+        profileToReturn = await _playerService.Add(Guid.Parse(azureId));
 
-        return Ok(_playerService.Get(Guid.Parse(newId)));
+        return Ok(profileToReturn);
     }
 }
