@@ -75,6 +75,12 @@ public class GameController : ControllerBase
     }
 
     //TODO ADD SHIPS
+    //[HttpPost]
+    //[Route("addships")]
+    //public async Task<ActionResult<AddShipsResponseDto>> AddPlayerShips(AddShipsDto addShips)
+    //{
+
+    //}
 
     //TODO START GAME (after 5 ships in each board)
 
