@@ -9,5 +9,6 @@ public interface IGameService
     Task<Board?> AddBoard(int playerId, int gameId);
     Task<Ship?> AddShipToBoard(Ship ship, int gameId, int playerId);
     Game? GetGameByGameCode(string gameCode);
-    //Task<String> CheckShot(int boardId, int rowNumber, char cellValue);
+    Task<int?> GetOpponentId(int hostPlayerId, int gameId);
+    int? GetOpponentBoardId(int? hostPlayerId, int gameId);
 }
