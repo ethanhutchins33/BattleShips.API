@@ -31,11 +31,12 @@ public class GameService : IGameService
 
         if (player == null) return null;
         
-        var newGame = await CreateGame(player);
-        
-        if (newGame == null) return null;
-        
-        await AddBoard(player.Id, newGame.Id);
+        var newGame = await _gameRepository.Add(new Game
+        {
+            DateCreated = DateTime.Now,
+            Player1Id = player.Id,
+            GameCode = GenerateRandomCode(),
+        });
 
         return newGame;
 
@@ -62,7 +63,6 @@ public class GameService : IGameService
         
         game.Player2Id = player.Id;
         await _gameRepository.Update(game);
-        await AddBoard(player.Id, gameId);
 
         return game;
     }
@@ -78,20 +78,6 @@ public class GameService : IGameService
             return game;
         }
         return null;
-    }
-
-    private async Task<Game?> CreateGame(IEntity player)
-    {
-        var newGameCode = GenerateRandomCode();
-        var result = await _gameRepository.Add(new Game
-            {
-                DateCreated = DateTime.Now,
-                Player1Id = player.Id,
-                GameCode = GenerateRandomCode(),
-            });
-        
-        return result;
-
     }
 
     public async Task<Board?> AddBoard(int playerId, int gameId)
@@ -148,4 +134,58 @@ public class GameService : IGameService
 
         return board ?? null;
     }
+
+    public async Task<int?> GetOpponentId(int hostPlayerId, int gameId)
+    {
+        var game = await _gameRepository.Get(gameId);
+
+        if(game == null) return null; 
+
+        var p1 = game.Player1Id;
+        var p2 = game.Player2Id;
+
+        if (p1 == hostPlayerId)
+        {
+            return p2;
+        } 
+        else if(p2 == hostPlayerId)
+        {
+            return p1;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public int? GetOpponentBoardId(int? opponentPlayerId, int gameId)
+    {
+        var boards = _boardRepository.GetAll();
+
+        if (boards == null)
+        {
+            Console.WriteLine("No boards were found");
+            return null;
+        }
+
+        var board = boards.SingleOrDefault(b => b.PlayerId == opponentPlayerId && b.GameId == gameId);
+
+        if (board == null)
+        {
+            Console.WriteLine($"No Opponent Board Found for opponentPlayerId: {opponentPlayerId}");
+            return null;
+        }
+
+        return board.Id;
+
+    }
+
+    //public async Task<string> CheckShot(int boardId, int rowNumber, char cellValue)
+    //{
+    //    //TODO validate if shot hit a ship on board
+    //    //var allShips = _shipRepository.GetAll();
+    //    //var ships = allShips.Select(x => x.BoardId == boardId);
+
+    //    return 
+    //}
 }
