@@ -42,20 +42,35 @@ public class GameController : ControllerBase
     public async Task<ActionResult<JoinGameResponseDto>> JoinGame(string gameCode)
     {
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
-
+        var player = _playerService.Get(Guid.Parse(azureId));
         var game = _gameService.GetGameByGameCode(gameCode);
 
         var gameToReturn = await _gameService.AddPlayerToGame(_playerService.Get(Guid.Parse(azureId)).Id, game.Id);
+
+        var gameToReturn = await _gameService.AddPlayerToGame(player.Id, game.Id);
+        var boardToReturn = await _gameService.AddBoard(player.Id, game.Id);
+
+        var opponentId = await _gameService.GetOpponentId(player.Id, game.Id);
+        var opponentBoardId = _gameService.GetOpponentBoardId(opponentId, game.Id);
 
         if (gameToReturn == null)
         {
             return NoContent();
         }
 
+        if (boardToReturn == null)
+        {
+            return NoContent();
+        }
+
         return Ok(new JoinGameResponseDto
         {
-            HostPlayerId = gameToReturn.Player1Id,
-            GuestPlayerId = gameToReturn.Player2Id,
+            GameId = gameToReturn.Id,
+            GameCode = gameCode,
+            BoardId = boardToReturn.Id,
+            PlayerId = player.Id,
+            OpponentPlayerId = opponentId,
+            OpponentBoardId = opponentBoardId,
         });
 
     }
