@@ -79,6 +79,29 @@ public class GameController : ControllerBase
     //TODO START GAME (after 5 ships in each board)
 
     //TODO FIRE AT SHIPS
+    [HttpPost]
+    [Route("fire")]
+    public ActionResult<ShotFiredResponseDto> ShotFired(ShotFiredDto shotFiredDto)
+    {
+        //TODO validate shot and check against ship locations in database
+
+        //var result = _gameService.CheckShot
+        //    (
+        //        shotFiredDto.BoardId,
+        //        shotFiredDto.RowNumber,
+        //        shotFiredDto.CellValue
+        //    );
+
+        Console.WriteLine(shotFiredDto.GameCode);
+        Console.WriteLine(shotFiredDto.BoardId);
+        Console.WriteLine(shotFiredDto.Y);
+        Console.WriteLine(shotFiredDto.X);
+
+        return Ok(new ShotFiredResponseDto 
+        { 
+            ShotResult = "hit"
+        });
+    }
 
     //TODO GETGAMESTATE => who's turn, winnerBool, list of shots so far
 
