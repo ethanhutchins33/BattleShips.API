@@ -45,7 +45,6 @@ public class GameController : ControllerBase
         var player = _playerService.Get(Guid.Parse(azureId));
         var game = _gameService.GetGameByGameCode(gameCode);
 
-        var gameToReturn = await _gameService.AddPlayerToGame(_playerService.Get(Guid.Parse(azureId)).Id, game.Id);
 
         var gameToReturn = await _gameService.AddPlayerToGame(player.Id, game.Id);
         var boardToReturn = await _gameService.AddBoard(player.Id, game.Id);
