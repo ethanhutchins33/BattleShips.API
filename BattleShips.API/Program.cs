@@ -11,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-//builder.Services.AddControllers().AddNewtonsoftJson();
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 //builder.Services.AddScoped<IRepository<Game>, GameRepository>();
 //builder.Services.AddScoped<IRepository<Board>, BoardRepository>();
@@ -46,18 +46,18 @@ var app = builder.Build();
 //}
 
 //// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 //app.UseCors((a) => a.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((b) => true).AllowCredentials());
 
 app.UseHttpsRedirection();
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 //app.MapControllers();
 
