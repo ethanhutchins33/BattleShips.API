@@ -94,22 +94,22 @@ stages:
               TF_VAR_SQL_SERVER_USERNAME: $(tf-sql-server-admin-username)
               TF_VAR_SQL_SERVER_PASSWORD: $(tf-sql-server-admin-password)
 
-   - stage: publish
-     displayName: copy packaged project to azure infrastructure
-     dependsOn: 
-     - package
-     - azure
-     jobs:
-       - job: Azure_WebApp 
-         steps:
-         - download: none
-         - task: DownloadPipelineArtifact@2
-           displayName: 'Download Service'
-           inputs:
-             artifact: project
-             path: $(Pipeline.Workspace)/artifacts/
-         - task: AzureWebApp@1
-           inputs:
-             azureSubscription: 'Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)'
-             appName: 'battleships-api'
-             package: '$(Pipeline.Workspace)/**/*.zip'
+  - stage: publish
+    displayName: copy packaged project to azure infrastructure
+    dependsOn: 
+    - package
+    - azure
+    jobs:
+      - job: Azure_WebApp 
+        steps:
+        - download: none
+        - task: DownloadPipelineArtifact@2
+          displayName: 'Download Service'
+          inputs:
+            artifact: project
+            path: $(Pipeline.Workspace)/artifacts/
+        - task: AzureWebApp@1
+          inputs:
+            azureSubscription: 'Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)'
+            appName: 'battleships-api'
+            package: '$(Pipeline.Workspace)/**/*.zip'
