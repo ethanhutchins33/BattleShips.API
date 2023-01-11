@@ -17,33 +17,33 @@ builder.Services.AddSwaggerGen();
 
 //builder.Services.AddScoped<IRepository<Game>, GameRepository>();
 //builder.Services.AddScoped<IRepository<Board>, BoardRepository>();
-//builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
+builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
 //builder.Services.AddScoped<IRepository<Ship>, ShipRepository>();
 //builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
 //builder.Services.AddScoped<IGameService, GameService>();
-//builder.Services.AddScoped<IPlayerService, PlayerService>();
+builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 builder.Services.AddHealthChecks();
 
-//builder.Services
-//    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
-//JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Db-ConnString"));
+    options.UseSqlServer("name=ConnectionStrings:Db-ConnString");
 });
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
-    //dbContext.Database.EnsureDeleted();
-    dbContext.Database.EnsureCreated();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
+//    //dbContext.Database.EnsureDeleted();
+//    dbContext.Database.EnsureCreated();
+//}
 
 //// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -52,7 +52,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseCors((a) => a.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((b) => true).AllowCredentials());
+app.UseCors((a) => a.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((b) => true).AllowCredentials());
 
 app.UseHttpsRedirection();
 
