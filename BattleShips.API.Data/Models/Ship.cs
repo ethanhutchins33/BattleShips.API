@@ -9,7 +9,7 @@ public class Ship : IEntity
     public int Id { get; set; }
     public int BoardId { get; set; }
     public int ShipTypeId { get; set; }
-    public byte PosX { get; set; }
-    public byte PosY { get; set; }
+    public int PosX { get; set; }
+    public int PosY { get; set; }
     public bool IsVertical { get; set; }
 }

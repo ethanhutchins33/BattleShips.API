@@ -26,7 +26,7 @@ public class GameController : ControllerBase
     {
         //TODO validate dto
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
-        var newGame = await _gameService.SetupNewGame(_playerService.Get(Guid.Parse(azureId)).Id);
+        var newGame = await _gameService.SetupNewGameAsync(_playerService.Get(Guid.Parse(azureId)).Id);
 
         if (newGame != null)
         {
@@ -46,10 +46,10 @@ public class GameController : ControllerBase
         var game = _gameService.GetGameByGameCode(gameCode);
 
 
-        var gameToReturn = await _gameService.AddPlayerToGame(player.Id, game.Id);
-        var boardToReturn = await _gameService.AddBoard(player.Id, game.Id);
+        var gameToReturn = await _gameService.AddPlayerToGameAsync(player.Id, game.Id);
+        var boardToReturn = await _gameService.NewBoardAsync(player.Id, game.Id);
 
-        var opponentId = await _gameService.GetOpponentId(player.Id, game.Id);
+        var opponentId = await _gameService.GetOpponentIdAsync(player.Id, game.Id);
         var opponentBoardId = _gameService.GetOpponentBoardId(opponentId, game.Id);
 
         if (gameToReturn == null)
@@ -75,12 +75,20 @@ public class GameController : ControllerBase
     }
 
     //TODO ADD SHIPS
-    //[HttpPost]
-    //[Route("addships")]
-    //public async Task<ActionResult<AddShipsResponseDto>> AddPlayerShips(AddShipsDto addShips)
-    //{
+    [HttpPost]
+    [Route("addships")]
+    public async Task<ActionResult<AddShipsResponseDto>> AddPlayerShips(AddShipsRequestDto addShips)
+    {
 
-    //}
+        await _gameService.AddShipsToBoardAsync(addShips.Board, addShips.GameCode, addShips.PlayerId);
+
+        return Ok(
+            new AddShipsResponseDto 
+            { 
+                GameCode = addShips.GameCode, 
+                PlayerId = addShips.PlayerId
+            });
+    }
 
     //TODO START GAME (after 5 ships in each board)
 
@@ -117,22 +125,7 @@ public class GameController : ControllerBase
     //    return Ok();
     //}
 
-    //[HttpPut("id")]
-    //public async Task<IActionResult> UpdateGame(Player id, Game? game)
-    //{
-    //    if (game != null && id != game.Id)
-    //    {
-    //        return BadRequest();
-    //    }
 
-    //    Game? dbGame = await _repository.Update(game);
 
-    //    if (dbGame == null)
-    //    {
-    //        return StatusCode(StatusCodes.Status500InternalServerError, $"Game with Id: {id} could not be updated");
-    //    }
-
-    //    return Ok(dbGame);
-    //}
 
 }

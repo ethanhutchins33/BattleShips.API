@@ -2,7 +2,7 @@
 
 public class ShotFiredDto
 {
-    public string GameCode { get; set; }
+    public string GameCode { get; set; } = string.Empty;
     public int BoardId { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
