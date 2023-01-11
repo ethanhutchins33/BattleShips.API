@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Identity.Web;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -36,6 +38,18 @@ builder.Services.AddDbContext<BattleShipsContext>(options =>
     options.UseSqlServer("name=ConnectionStrings:Db-ConnString");
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins(
+                "https://bsstaticstorage.z6.web.core.windows.net",
+                "http://localhost:4200"
+                );
+        });
+});
+
 var app = builder.Build();
 
 //using (var scope = app.Services.CreateScope())
@@ -45,16 +59,15 @@ var app = builder.Build();
 //    dbContext.Database.EnsureCreated();
 //}
 
-//// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors((a) => a.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((b) => true).AllowCredentials());
-
 app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
