@@ -17,17 +17,17 @@ builder.Services.AddSwaggerGen();
 
 //builder.Services.AddScoped<IRepository<Game>, GameRepository>();
 //builder.Services.AddScoped<IRepository<Board>, BoardRepository>();
-builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
+//builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
 //builder.Services.AddScoped<IRepository<Ship>, ShipRepository>();
 //builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
 //builder.Services.AddScoped<IGameService, GameService>();
-builder.Services.AddScoped<IPlayerService, PlayerService>();
+//builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 builder.Services.AddHealthChecks();
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+//builder.Services
+//    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 //JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
