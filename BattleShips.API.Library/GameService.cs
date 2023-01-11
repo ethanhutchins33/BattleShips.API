@@ -25,66 +25,72 @@ public class GameService : IGameService
         _shipTypeRepository = shipTypeRepository;
     }
 
-    public async Task<Game?> SetupNewGame(int playerId)
+    public async Task<Game?> SetupNewGameAsync(int playerId)
     {
         var player = await _playerRepository.Get(playerId);
 
         if (player == null) return null;
         
-        var newGame = await CreateGame(player);
-        
-        if (newGame == null) return null;
-        
-        await AddBoard(player.Id, newGame.Id);
+        var newGame = await _gameRepository.Add(new Game
+        {
+            DateCreated = DateTime.Now,
+            Player1Id = player.Id,
+            GameCode = GenerateRandomCode(),
+        });
 
         return newGame;
 
     }
 
-    public async Task<Game?> AddPlayerToGame(int joiningPlayerId, int gameId)
+    public async Task<Game?> AddPlayerToGameAsync(int joiningPlayerId, int gameId)
     {
         var game = await _gameRepository.Get(gameId);
 
         if (game == null)
         {
-            return null;
+            throw new NullReferenceException($"No game found with Game Id: {gameId}");
         }
 
-        if (game.Player1Id == joiningPlayerId || game.Player2Id == joiningPlayerId)
+        var player = await _playerRepository.Get(joiningPlayerId);
+
+        if (player == null)
+        {
+            throw new NullReferenceException($"No player found with Player ID: {joiningPlayerId}");
+        }
+
+        if (game.Player1Id == player.Id)
         {
             return game;
         }
-        
-        var player = await _playerRepository.Get(joiningPlayerId) ??
-                     await _playerRepository.Add(new Player
-                     {
-                         UserName = "P2UserName",
-                     });
-
-        if (player == null) return game;
-        
-        game.Player2Id = player.Id;
-        await _gameRepository.Update(game);
-        await AddBoard(player.Id, gameId);
+        else
+        {
+            game.Player2Id = player.Id;
+            await _gameRepository.Update(game);
+        }
 
         return game;
     }
 
-    private async Task<Game?> CreateGame(IEntity player)
+    public Game? GetGameByGameCode(string gameCode)
     {
-        var newGameCode = GenerateRandomCode();
-        var result = await _gameRepository.Add(new Game
-            {
-                DateCreated = DateTime.Now,
-                Player1Id = player.Id,
-                GameCode = GenerateRandomCode(),
-            });
-        
-        return result;
+        var games = _gameRepository.GetAll();
 
+        if(games == null)
+        {
+            throw new NullReferenceException("No games were found");
+        }
+        
+        var game = games.FirstOrDefault(x => x.GameCode == gameCode);
+        
+        if (game == null)
+        {
+            throw new NullReferenceException($"Game with gameCode: {gameCode} does not exist");
+        }
+
+        return game;
     }
 
-    public async Task<Board?> AddBoard(int playerId, int gameId)
+    public async Task<Board?> NewBoardAsync(int playerId, int gameId)
     {
         var board = GetBoard(playerId, gameId);
 
@@ -99,21 +105,46 @@ public class GameService : IGameService
 
     }
 
-    public async Task<Ship?> AddShipToBoard(Ship? ship, int gameId, int playerId)
+    public async Task AddShipsToBoardAsync(string[,] ships, string gameCode, int playerId)
     {
-        await _shipRepository.Add(ship);
+        var game = GetGameByGameCode(gameCode);
 
-        var board = GetBoard(playerId, gameId);
-
-        if (board != null)
+        if(game == null)
         {
-            if (ship != null)
+            throw new NullReferenceException($"No game found with gamecode: {gameCode}");
+        }
+
+        var board = GetBoard(playerId, game.Id);
+
+        if(board == null)
+        {
+            throw new NullReferenceException($"Board not found for player: {playerId} and game: {gameCode}");
+        }
+
+        List<Ship> shipList = new();
+
+        for (int x = 0; x < ships.GetLength(0); x++)
+        {
+            for (int y = 0; y < ships.GetLength(1); y++)
             {
-                ship.BoardId = board.Id;
+                if (ships[x, y] == "S")
+                {
+                    shipList.Add(new Ship
+                    {
+                        BoardId = board.Id,
+                        PosX = x,
+                        PosY = y,
+                        IsVertical = false, //TODO fix hardcoded value
+                        ShipTypeId = 1 //TODO fix hardcoded value
+                    });
+                }
             }
         }
 
-        return await _shipRepository.Update(ship);
+        foreach (var ship in shipList)
+        {
+            await _shipRepository.Add(ship);
+        }
     }
 
     private static string GenerateRandomCode()
@@ -138,4 +169,58 @@ public class GameService : IGameService
 
         return board ?? null;
     }
+
+    public async Task<int?> GetOpponentIdAsync(int hostPlayerId, int gameId)
+    {
+        var game = await _gameRepository.Get(gameId);
+
+        if(game == null) return null; 
+
+        var p1 = game.Player1Id;
+        var p2 = game.Player2Id;
+
+        if (p1 == hostPlayerId)
+        {
+            return p2;
+        } 
+        else if(p2 == hostPlayerId)
+        {
+            return p1;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public int? GetOpponentBoardId(int? opponentPlayerId, int gameId)
+    {
+        var boards = _boardRepository.GetAll();
+
+        if (boards == null)
+        {
+            Console.WriteLine("No boards were found");
+            return null;
+        }
+
+        var board = boards.SingleOrDefault(b => b.PlayerId == opponentPlayerId && b.GameId == gameId);
+
+        if (board == null)
+        {
+            Console.WriteLine($"No Opponent Board Found for opponentPlayerId: {opponentPlayerId}");
+            return null;
+        }
+
+        return board.Id;
+
+    }
+
+    //public async Task<string> CheckShot(int boardId, int rowNumber, char cellValue)
+    //{
+    //    //TODO validate if shot hit a ship on board
+    //    //var allShips = _shipRepository.GetAll();
+    //    //var ships = allShips.Select(x => x.BoardId == boardId);
+
+    //    return 
+    //}
 }
