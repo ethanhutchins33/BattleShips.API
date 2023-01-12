@@ -43,7 +43,7 @@ builder.Services.AddCors(options =>
         {
             policy
             .WithOrigins(
-                "https://bsstaticstorage.z6.web.core.windows.net", 
+                "https://bsstaticstorage.z6.web.core.windows.net",
                 "http://localhost:4200")
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -58,7 +58,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
     //dbContext.Database.EnsureDeleted();
     //dbContext.Database.EnsureCreated();
-    dbContext.Database.Migrate();
+    //dbContext.Database.Migrate();
 }
 
 if (app.Environment.IsDevelopment())
