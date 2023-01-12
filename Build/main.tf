@@ -69,6 +69,7 @@ resource "azurerm_mssql_database" "sql-db" {
   server_id                   = azurerm_mssql_server.sql-server.id
   max_size_gb                 = 8
   min_capacity                = 0.5
+  license_type                = ""
   sku_name                    = "GP_S_Gen5_1" //sku name specifies the db is 'serverless'
   auto_pause_delay_in_minutes = 60
   tags = {
