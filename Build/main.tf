@@ -4,8 +4,8 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_app_service_plan" "appserviceplan" {
-  name = "battleships-service-plan"
-  location = azurerm_resource_group.rg.location
+  name                = "battleships-service-plan"
+  location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku {
     tier = "Basic"
@@ -18,18 +18,19 @@ resource "azurerm_app_service" "webapp" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   app_service_plan_id = azurerm_app_service_plan.appserviceplan.id
-  
+
   site_config {
     cors {
-      allowed_origins = ["https://bsstaticstorage.z6.web.core.windows.net/"]
+      allowed_origins     = ["https://bsstaticstorage.z6.web.core.windows.net"]
+      support_credentials = true
     }
   }
 
   connection_string {
-    name = "Db-ConnString"
-    type = "SQLAzure"
+    name  = "Db-ConnString"
+    type  = "SQLAzure"
     value = "Server=tcp:${azurerm_mssql_server.sql-server.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_mssql_database.sql-db.name};Persist Security Info=False;User ID=${azurerm_mssql_server.sql-server.administrator_login};Password=${azurerm_mssql_server.sql-server.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
- }
+  }
 }
 
 resource "azurerm_mssql_server" "sql-server" {
@@ -52,7 +53,7 @@ resource "azurerm_mssql_database" "sql-db" {
   min_capacity                = 0.5
   sku_name                    = "GP_S_Gen5_1" //sku name specifies the db is 'serverless'
   auto_pause_delay_in_minutes = 60
-    tags = {
+  tags = {
     environment = "production"
   }
 }
