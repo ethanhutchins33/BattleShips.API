@@ -15,7 +15,7 @@ resource "azurerm_windows_web_app" "webapp" {
   name                = "battleships-api"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  app_service_plan_id = azurerm_app_service_plan.appserviceplan.id
+  service_plan_id     = azurerm_app_service_plan.appserviceplan.id
 
   site_config {
     cors {
@@ -45,8 +45,8 @@ resource "azurerm_windows_web_app" "webapp" {
         retention_in_mb   = "35"
       }
     }
-    detailed_error_messages_enabled = true
-    failed_request_tracing_enabled  = true
+    detailed_error_messages = true
+    failed_request_tracing  = true
 
   }
 }
