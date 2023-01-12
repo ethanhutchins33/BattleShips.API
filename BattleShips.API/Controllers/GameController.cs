@@ -3,10 +3,12 @@ using BattleShips.API.Library;
 using BattleShips.API.Library.Requests;
 using BattleShips.API.Library.Responses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 namespace BattleShips.API.Controllers;
 
 [Authorize]
+[EnableCors("AllowSpecificOriginPolicy")]
 [ApiController]
 [Route("api/game")]
 public class GameController : ControllerBase
@@ -83,9 +85,9 @@ public class GameController : ControllerBase
         await _gameService.AddShipsToBoardAsync(addShips.Board, addShips.GameCode, addShips.PlayerId);
 
         return Ok(
-            new AddShipsResponseDto 
-            { 
-                GameCode = addShips.GameCode, 
+            new AddShipsResponseDto
+            {
+                GameCode = addShips.GameCode,
                 PlayerId = addShips.PlayerId
             });
     }
@@ -111,8 +113,8 @@ public class GameController : ControllerBase
         Console.WriteLine(shotFiredDto.Y);
         Console.WriteLine(shotFiredDto.X);
 
-        return Ok(new ShotFiredResponseDto 
-        { 
+        return Ok(new ShotFiredResponseDto
+        {
             ShotResult = "hit"
         });
     }

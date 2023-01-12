@@ -23,6 +23,8 @@ builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 
+builder.Services.AddHealthChecks();
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
@@ -31,32 +33,49 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Db-ConnString"));
+    options.UseSqlServer("name=ConnectionStrings:Db-ConnString");
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowSpecificOriginPolicy",
+        policy =>
+        {
+            policy
+            .WithOrigins(
+                "https://bsstaticstorage.z6.web.core.windows.net", 
+                "http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+        });
 });
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
+//using (var scope = app.Services.CreateScope())
+//{
+    //var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
     //dbContext.Database.EnsureDeleted();
-    dbContext.Database.EnsureCreated();
-}
+    //dbContext.Database.EnsureCreated();
+    //dbContext.Database.Migrate();
+//}
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseCors((a) => a.AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowed((b) => true).AllowCredentials());
-
 app.UseHttpsRedirection();
+
+app.UseCors("AllowSpecificOriginPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.Run();
