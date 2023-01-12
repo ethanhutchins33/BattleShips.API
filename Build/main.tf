@@ -24,6 +24,7 @@ resource "azurerm_app_service" "webapp" {
       allowed_origins     = ["https://bsstaticstorage.z6.web.core.windows.net"]
       support_credentials = true
     }
+    dotnet_framework_version = "v6.0"
   }
 
   connection_string {
