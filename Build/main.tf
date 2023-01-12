@@ -65,9 +65,10 @@ resource "azurerm_mssql_server" "sql-server" {
 }
 
 resource "azurerm_mssql_database" "sql-db" {
-  name         = "bs-sql-db"
-  server_id    = azurerm_mssql_server.sql-server.id
-  sku_name     = "S0" //sku name specifies the db is 'serverless'
+  name        = "bs-sql-db"
+  server_id   = azurerm_mssql_server.sql-server.id
+  max_size_gb = 4
+  sku_name    = "S0" //sku name specifies the db is 'serverless'
   tags = {
     environment = "production"
   }
