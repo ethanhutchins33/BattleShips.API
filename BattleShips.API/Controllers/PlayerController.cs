@@ -8,8 +8,8 @@ using Microsoft.Identity.Web.Resource;
 namespace BattleShips.API.Controllers;
 
 [Authorize]
+[EnableCors("AllowSpecificOriginPolicy")]
 [ApiController]
-[EnableCors]
 [Route("api/player")]
 public class PlayerController : ControllerBase
 {

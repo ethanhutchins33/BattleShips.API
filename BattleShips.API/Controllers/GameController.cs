@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Cors;
 namespace BattleShips.API.Controllers;
 
 [Authorize]
+[EnableCors("AllowSpecificOriginPolicy")]
 [ApiController]
-[EnableCors]
 [Route("api/game")]
 public class GameController : ControllerBase
 {
