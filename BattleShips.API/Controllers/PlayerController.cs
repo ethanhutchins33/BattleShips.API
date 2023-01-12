@@ -1,6 +1,7 @@
 ﻿using BattleShips.API.Data.Models;
 using BattleShips.API.Library;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 
@@ -8,6 +9,7 @@ namespace BattleShips.API.Controllers;
 
 [Authorize]
 [ApiController]
+[EnableCors]
 [Route("api/player")]
 public class PlayerController : ControllerBase
 {

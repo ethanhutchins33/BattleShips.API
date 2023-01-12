@@ -3,11 +3,13 @@ using BattleShips.API.Library;
 using BattleShips.API.Library.Requests;
 using BattleShips.API.Library.Responses;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 
 namespace BattleShips.API.Controllers;
 
 [Authorize]
 [ApiController]
+[EnableCors]
 [Route("api/game")]
 public class GameController : ControllerBase
 {

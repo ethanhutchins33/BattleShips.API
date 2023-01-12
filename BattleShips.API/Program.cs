@@ -46,7 +46,8 @@ builder.Services.AddCors(options =>
                 "https://bsstaticstorage.z6.web.core.windows.net", 
                 "http://localhost:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
         });
 });
 
