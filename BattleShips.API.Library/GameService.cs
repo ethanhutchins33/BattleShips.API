@@ -209,16 +209,9 @@ public class GameService : IGameService
 
     }
 
-    public async Task<Shot?> GetLastShotAsync(string gameCode, int playerId)
+    public async Task<Shot?> GetLastShotAsync(int gameId, int playerId)
     {
-        var game = GetGameByGameCode(gameCode);
-
-        if (game == null)
-        {
-            throw new NullReferenceException($"{nameof(GetLastShotAsync)}: No game found with gameCode: {gameCode}");
-        }
-
-        var boards = _boardRepository.GetAll().Where(b => b.GameId == game.Id).ToList();
+        var boards = _boardRepository.GetAll().Where(b => b.GameId == gameId).ToList();
 
         if (boards == null)
         {

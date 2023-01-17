@@ -11,7 +11,7 @@ public interface IGameService
     Game? GetGameByGameCode(string gameCode);
     Task<Player?> GetOpponentAsync(int gameId, int hostPlayerId);
     Board? GetBoard(int gameId, int playerId);
-    Task<Shot?> GetLastShotAsync(string gameCode, int playerId);
+    Task<Shot?> GetLastShotAsync(int gameId, int playerId);
     Task<Shot?> CheckShot(int boardId, int X, int Y);
     Task ReadyUpAsync(string gameCode, int playerId);
     string[,] GetShipsMatrix(int boardId);

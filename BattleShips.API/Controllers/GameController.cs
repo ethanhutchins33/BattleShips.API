@@ -223,15 +223,14 @@ public class GameController : ControllerBase
     [HttpGet("id")]
     public async Task<ActionResult<GetGameStateResponseDto>> GetGameState(GetGameStateRequestDto getGameStateRequestDto)
     {
-        var lastShot = await _gameService.GetLastShotAsync(getGameStateRequestDto.GameCode, getGameStateRequestDto.PlayerId);
+        var lastShot = await _gameService.GetLastShotAsync(getGameStateRequestDto.GameId, getGameStateRequestDto.PlayerId);
 
         if (lastShot == null)
         {
             return NoContent();
         }
 
-        return Ok(new GetGameStateResponseDto { 
-            GameCode = getGameStateRequestDto.GameCode, 
+        return Ok(new GetGameStateResponseDto {
             LastShot = lastShot,
         });
     }
