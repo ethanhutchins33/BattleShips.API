@@ -60,8 +60,18 @@ public class GameController : ControllerBase
     public async Task<ActionResult<JoinGameResponseDto>> JoinGame(string gameCode)
     {
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
+
         var player = _playerService.Get(Guid.Parse(azureId));
+        if (player == null)
+        {
+            return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Azure ID: {azureId}");
+        }
+
         var game = _gameService.GetGameByGameCode(gameCode);
+        if (game == null)
+        {
+            return StatusCode(500, $"{nameof(JoinGame)}: No Game found with Game Code: {gameCode}");
+        }
 
         var gameToReturn = await _gameService.AddPlayerToGameAsync(player.Id, game.Id);
         if (gameToReturn == null)
@@ -70,12 +80,8 @@ public class GameController : ControllerBase
         }
 
         //check if board already exists
-        var boardToReturn = _gameService.GetBoard(game.Id, player.Id);
-
-        if (boardToReturn == null)
-        {
-            boardToReturn = await _gameService.NewBoardAsync(player.Id, game.Id);
-        }
+        var boardToReturn = _gameService.GetBoard(game.Id, player.Id) ?? 
+                            await _gameService.NewBoardAsync(player.Id, game.Id);
 
         if (boardToReturn == null)
         {
