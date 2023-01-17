@@ -13,7 +13,7 @@ public interface IGameService
     Board? GetBoard(int gameId, int playerId);
     Task<Shot?> GetLastShotAsync(string gameCode, int playerId);
     Task<Shot?> CheckShot(int boardId, int X, int Y);
-    Task ReadyUp(string gameCode, int playerId);
+    Task ReadyUpAsync(string gameCode, int playerId);
     string[,] GetShipsMatrix(int boardId);
     Task<bool> GetLobbyReadyStatusAsync(int gameId, int hostId);
 }

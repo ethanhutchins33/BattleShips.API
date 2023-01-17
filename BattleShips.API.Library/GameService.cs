@@ -310,20 +310,20 @@ public class GameService : IGameService
 
     }
 
-    public async Task ReadyUp(string gameCode, int playerId)
+    public async Task ReadyUpAsync(string gameCode, int playerId)
     {
         var game = GetGameByGameCode(gameCode);
 
         if(game == null)
         {
-            throw new NullReferenceException($"{nameof(ReadyUp)}: No game found with gameCode: {gameCode}");
+            throw new NullReferenceException($"{nameof(ReadyUpAsync)}: No game found with gameCode: {gameCode}");
         }
 
         var board = GetBoard(game.Id, playerId);
 
         if (board == null)
         {
-            throw new NullReferenceException($"{nameof(ReadyUp)}: No board found with Game Id: {game.Id} and Player Id: {playerId}");
+            throw new NullReferenceException($"{nameof(ReadyUpAsync)}: No board found with Game Id: {game.Id} and Player Id: {playerId}");
         }
 
         board.IsReady = true;

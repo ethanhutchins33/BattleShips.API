@@ -104,7 +104,7 @@ public class GameController : ControllerBase
     {
         await _gameService.AddShipsToBoardAsync(addShips.Board, addShips.GameCode, addShips.PlayerId);
 
-        await _gameService.ReadyUp(addShips.GameCode, addShips.PlayerId);
+        await _gameService.ReadyUpAsync(addShips.GameCode, addShips.PlayerId);
 
         return Ok(
             new AddShipsResponseDto
