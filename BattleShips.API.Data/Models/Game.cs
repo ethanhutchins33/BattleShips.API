@@ -9,6 +9,7 @@ public class Game : IEntity
     public int Id { get; set; }
     public string? GameCode { get; set; }
     public DateTime DateCreated { get; set; }
+    public DateTime DateStarted { get; set; }
     public int? Player1Id { get; set; }
     public int? Player2Id { get; set; }
     public int? PlayerWinnerId { get; set; }

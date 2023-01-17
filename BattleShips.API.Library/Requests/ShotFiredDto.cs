@@ -1,9 +1,15 @@
-﻿namespace BattleShips.API.Library.Requests;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class ShotFiredDto
+namespace BattleShips.API.Library.Requests;
+
+public class ShotFiredRequestDto
 {
-    public string GameCode { get; set; } = string.Empty;
+    [Required]
     public int BoardId { get; set; }
+    [Required]
+    [Range(0, 6)]
     public int X { get; set; }
+    [Required]
+    [Range(0, 6)]
     public int Y { get; set; }
 }

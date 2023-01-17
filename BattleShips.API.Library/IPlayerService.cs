@@ -5,7 +5,7 @@ namespace BattleShips.API.Library;
 public interface IPlayerService
 {
     Player? Get(Guid azureId);
-    Task<Player?> Get(int id);
-    Task<Player?> Add(Guid azureId);
-    Task<Player?> Remove(int id);
+    Task<Player?> GetAsync(int id);
+    Task<Player?> AddAsync(Guid azureId, string userName);
+    Task<Player?> RemoveAsync(int id);
 }

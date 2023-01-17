@@ -13,7 +13,7 @@ where TContext : DbContext
         _context = context;
     }
 
-    public async Task<TEntity?> Add(TEntity? entity)
+    public async Task<TEntity?> AddAsync(TEntity? entity)
     {
         try
         {
@@ -45,7 +45,7 @@ where TContext : DbContext
         }
     }
 
-    public async Task<TEntity?> Get(int? id)
+    public async Task<TEntity?> GetAsync(int? id)
     {
         try
         {
@@ -62,7 +62,7 @@ where TContext : DbContext
         return null;
     }
 
-    public async Task<TEntity?> Update(TEntity? entity)
+    public async Task<TEntity?> UpdateAsync(TEntity? entity)
     {
         try
         {
@@ -74,16 +74,20 @@ where TContext : DbContext
         {
             return null;
         }
-
     }
 
-    public async Task<TEntity?> Delete(int? id)
+    public async Task<TEntity?> DeleteAsync(int? id)
     {
         try
         {
             if (id != null)
             {
                 var entity = await _context.Set<TEntity>().FindAsync(id);
+
+                if (entity != null)
+                {
+                    return entity;
+                }
 
                 _context.Set<TEntity>().Remove(entity);
                 await _context.SaveChangesAsync();

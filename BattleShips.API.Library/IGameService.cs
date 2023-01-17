@@ -9,6 +9,11 @@ public interface IGameService
     Task<Board?> NewBoardAsync(int playerId, int gameId);
     Task AddShipsToBoardAsync(string[,] ships, string gameCode, int playerId);
     Game? GetGameByGameCode(string gameCode);
-    Task<int?> GetOpponentIdAsync(int hostPlayerId, int gameId);
-    int? GetOpponentBoardId(int? hostPlayerId, int gameId);
+    Task<Player?> GetOpponentAsync(int gameId, int hostPlayerId);
+    Board? GetBoard(int gameId, int playerId);
+    Task<Shot?> GetLastShotAsync(string gameCode, int playerId);
+    Task<Shot?> CheckShot(int boardId, int X, int Y);
+    Task ReadyUp(string gameCode, int playerId);
+    string[,] GetShipsMatrix(int boardId);
+    Task<bool> GetLobbyReadyStatusAsync(int gameId, int hostId);
 }
