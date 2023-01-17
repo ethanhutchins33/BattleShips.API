@@ -152,16 +152,9 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    [Route("state/{gameCode}/{hostId}")]
-    public async Task<ActionResult<GetFullGameStateResponseDto>> GetFullGameState(string gameCode, int hostId)
+    [Route("state/{gameId}/{hostId}")]
+    public async Task<ActionResult<GetFullGameStateResponseDto>> GetFullGameState(int gameId, int hostId)
     {
-        var game = _gameService.GetGameByGameCode(gameCode);
-
-        if (game == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Game found with Game Code: {gameCode}");
-        }
-
         var host = await _playerService.GetAsync(hostId);
 
         if (host == null)
@@ -169,7 +162,7 @@ public class GameController : ControllerBase
             return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Player Id: {hostId}");
         }
 
-        var hostBoard = _gameService.GetBoard(game.Id, host.Id);
+        var hostBoard = _gameService.GetBoard(gameId, host.Id);
 
         if (hostBoard == null)
         {
@@ -184,13 +177,13 @@ public class GameController : ControllerBase
         }
 
         var opponent =
-            await _gameService.GetOpponentAsync(game.Id, hostId);
+            await _gameService.GetOpponentAsync(gameId, hostId);
 
         if (opponent == null)
         {
-            return base.Ok(new GetFullGameStateResponseDto
+            return Ok(new GetFullGameStateResponseDto
             {
-                GameCode = gameCode,
+                GameId = gameId,
                 HostId = host.Id,
                 HostName = host.UserName,
                 HostBoardId = hostBoard.Id,
@@ -198,13 +191,13 @@ public class GameController : ControllerBase
             });
         }
 
-        var opponentBoard = _gameService.GetBoard(game.Id, opponent.Id);
+        var opponentBoard = _gameService.GetBoard(gameId, opponent.Id);
 
         if (opponentBoard == null)
         {
-            return base.Ok(new GetFullGameStateResponseDto
+            return Ok(new GetFullGameStateResponseDto
             {
-                GameCode = gameCode,
+                GameId = gameId,
                 HostId = host.Id,
                 HostName = host.UserName,
                 HostBoardId = hostBoard.Id,
@@ -212,9 +205,9 @@ public class GameController : ControllerBase
             });
         }
 
-        return base.Ok(new GetFullGameStateResponseDto
+        return Ok(new GetFullGameStateResponseDto
         {
-            GameCode = gameCode,
+            GameId = gameId,
             HostId = host.Id,
             HostName = host.UserName,
             HostBoardId = hostBoard.Id,
@@ -237,10 +230,9 @@ public class GameController : ControllerBase
             return NoContent();
         }
 
-        return Ok(
-            new GetGameStateResponseDto { 
-                GameCode = getGameStateRequestDto.GameCode, 
-                LastShot = lastShot,
+        return Ok(new GetGameStateResponseDto { 
+            GameCode = getGameStateRequestDto.GameCode, 
+            LastShot = lastShot,
         });
     }
 
