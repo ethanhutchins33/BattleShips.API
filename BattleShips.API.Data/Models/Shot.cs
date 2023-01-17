@@ -9,5 +9,5 @@ public class Shot : IEntity
     public int BoardId { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
-    public string shotStatus = String.Empty;
+    public string shotStatus = string.Empty;
 }

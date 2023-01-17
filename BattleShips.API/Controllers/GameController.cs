@@ -129,7 +129,7 @@ public class GameController : ControllerBase
 
         return Ok(new ShotFiredResponseDto
         {
-            ShotResult = result.shotStatus
+            ShotResult = result.ShotStatus
         });
     }
 

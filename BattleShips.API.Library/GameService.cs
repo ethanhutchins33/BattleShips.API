@@ -287,7 +287,7 @@ public class GameService : IGameService
                     BoardId = boardId,
                     X = X,
                     Y = Y,
-                    shotStatus = "hit",
+                    ShotStatus = "hit",
                 });
         } 
         else
@@ -298,7 +298,7 @@ public class GameService : IGameService
                     BoardId = boardId,
                     X = X,
                     Y = Y,
-                    shotStatus = "missed",
+                    ShotStatus = "missed",
                 });
         }
         if (result == null)
