@@ -188,7 +188,7 @@ public class GameController : ControllerBase
 
         if (opponent == null)
         {
-            return base.Ok(new Library.Responses.GetFullGameStateResponseDto
+            return base.Ok(new GetFullGameStateResponseDto
             {
                 GameCode = gameCode,
                 HostId = host.Id,
@@ -202,7 +202,7 @@ public class GameController : ControllerBase
 
         if (opponentBoard == null)
         {
-            return base.Ok(new Library.Responses.GetFullGameStateResponseDto
+            return base.Ok(new GetFullGameStateResponseDto
             {
                 GameCode = gameCode,
                 HostId = host.Id,
@@ -212,7 +212,7 @@ public class GameController : ControllerBase
             });
         }
 
-        return base.Ok(new Library.Responses.GetFullGameStateResponseDto
+        return base.Ok(new GetFullGameStateResponseDto
         {
             GameCode = gameCode,
             HostId = host.Id,
