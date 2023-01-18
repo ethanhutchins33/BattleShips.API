@@ -135,14 +135,30 @@ public class GameController : ControllerBase
     }
 
     [HttpGet]
-    [Route("lobby/{gameId}/{hostId}")]
-    public async Task<ActionResult<GetLobbyDetailsResponseDto>> PollLobbyDetails(int gameId, int hostId)
+    [Route("ready/{gameId}")]
+    public async Task<ActionResult<GetLobbyDetailsResponseDto>> PollLobbyDetails(int gameId)
     {
-        var playersReady = await _gameService.GetLobbyReadyStatusAsync(gameId, hostId);
+        var playersReady = await _gameService.GetLobbyReadyStatusAsync(gameId);
+
+        
 
         return Ok(new GetLobbyDetailsResponseDto
         {
             LobbyStatus = playersReady
+        });
+    }
+
+    [HttpGet]
+    [Route("start/{gameId}")]
+    public async Task<ActionResult<StartResponseDto>> StartGame(int gameId)
+    {
+        var starterId = await _gameService.GetStarterId(gameId);
+
+        await _gameService.SetGameStartedDateTime(gameId);
+
+        return Ok(new StartResponseDto
+        {
+            StarterId = starterId
         });
     }
 
@@ -215,10 +231,11 @@ public class GameController : ControllerBase
         });
     }
 
-    [HttpGet("id")]
-    public async Task<ActionResult<GetGameStateResponseDto>> GetGameState(GetGameStateRequestDto getGameStateRequestDto)
+    [HttpGet]
+    [Route("last/{gameId}")]
+    public async Task<ActionResult<GetGameStateResponseDto>> GetGameState(int gameId)
     {
-        var lastShot = await _gameService.GetLastShotAsync(getGameStateRequestDto.GameId, getGameStateRequestDto.PlayerId);
+        var lastShot = await _gameService.GetLastShotAsync(gameId);
 
         if (lastShot == null)
         {
@@ -229,8 +246,4 @@ public class GameController : ControllerBase
             LastShot = lastShot,
         });
     }
-
-
-
-
 }

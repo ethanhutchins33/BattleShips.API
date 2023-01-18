@@ -33,8 +33,13 @@ public class GameService : IGameService
     {
         var player = await _playerRepository.GetAsync(playerId);
 
-        if (player == null) return null;
-        
+        if (player == null)
+        {
+            throw new NullReferenceException(
+                $"{nameof(SetupNewGameAsync)}: No Player found with Player ID: {playerId}");
+
+        }
+
         var newGame = await _gameRepository.AddAsync(new Game
         {
             DateCreated = DateTime.Now,
@@ -209,13 +214,13 @@ public class GameService : IGameService
 
     }
 
-    public async Task<Shot?> GetLastShotAsync(int gameId, int playerId)
+    public async Task<Shot?> GetLastShotAsync(int gameId)
     {
         var boards = _boardRepository.GetAll().Where(b => b.GameId == gameId).ToList();
 
         if (boards == null)
         {
-            throw new NullReferenceException($"{nameof(GetLastShotAsync)}: No boards found in database with Game Id: {game.Id}");
+            throw new NullReferenceException($"{nameof(GetLastShotAsync)}: No boards found in database with Game Id: {gameId}");
         }
 
         var shots = new List<Shot>();
@@ -255,7 +260,7 @@ public class GameService : IGameService
         return ships.Where(Ship => Ship.BoardId == boardId).ToList();
     }
 
-    public async Task<Shot?> CheckShot(int boardId, int X, int Y)
+    public async Task<Shot?> CheckShot(int boardId, int x, int y)
     {
 
         var board = await _boardRepository.GetAsync(boardId);
@@ -270,16 +275,16 @@ public class GameService : IGameService
             throw new NullReferenceException($"{nameof(CheckShot)}: No ships found on board with board Id: {boardId}");
         }
 
-        var result = new Shot();
+        Shot? result;
 
-        if (ships.Any(ship => ship.PosX== X && ship.PosY == Y))
+        if (ships.Any(ship => ship.PosX == x && ship.PosY == y))
         {
             result = await _shotRepository.AddAsync(
                 new Shot
                 {
                     BoardId = boardId,
-                    X = X,
-                    Y = Y,
+                    X = x,
+                    Y = y,
                     ShotStatus = "hit",
                 });
         } 
@@ -289,8 +294,8 @@ public class GameService : IGameService
                 new Shot
                 {
                     BoardId = boardId,
-                    X = X,
-                    Y = Y,
+                    X = x,
+                    Y = y,
                     ShotStatus = "missed",
                 });
         }
@@ -303,7 +308,7 @@ public class GameService : IGameService
 
     }
 
-    public async Task ReadyUpAsync(string gameCode, int playerId)
+    public async Task ReadyUpAsync(string gameCode, int playerId) //TODO switch parameter gameCode to boardId
     {
         var game = GetGameByGameCode(gameCode);
 
@@ -338,7 +343,7 @@ public class GameService : IGameService
         return matrix;
     }
 
-    public async Task<bool> GetLobbyReadyStatusAsync(int gameId, int hostId)
+    public async Task<bool> GetLobbyReadyStatusAsync(int gameId)
     {
         var game = await _gameRepository.GetAsync(gameId);
         if (game == null)
@@ -369,12 +374,29 @@ public class GameService : IGameService
         return p1ReadyStatus && p2ReadyStatus;
     }
 
-    //public async Task<string> CheckShot(int boardId, int rowNumber, char cellValue)
-    //{
-    //    //TODO validate if shot hit a ship on board
-    //    //var allShips = _shipRepository.GetAll();
-    //    //var ships = allShips.Select(x => x.BoardId == boardId);
+    public async Task<int> GetStarterId(int gameId)
+    {
+        var game = await _gameRepository.GetAsync(gameId);
 
-    //    return 
-    //}
+        if (game == null)
+        {
+            throw new NullReferenceException($"{nameof(GetStarterId)}: No game found with Game Id: {gameId}");
+        }
+
+        return game.Player1Id;
+    }
+
+    public async Task SetGameStartedDateTime(int gameId)
+    {
+        var game = await _gameRepository.GetAsync(gameId);
+
+        if (game == null)
+        {
+            throw new NullReferenceException();
+        }
+
+        game.DateStarted = DateTime.Now;
+
+        await _gameRepository.UpdateAsync(game);
+    }
 }

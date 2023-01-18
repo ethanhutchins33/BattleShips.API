@@ -1,6 +1,5 @@
 ﻿namespace BattleShips.API.Library.Responses;
-public class GetLobbyDetailsResponseDto
+public class StartResponseDto
 {
-    public bool LobbyStatus { get; set; }
     public int StarterId { get; set; }
 }
