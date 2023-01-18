@@ -4,9 +4,6 @@ using BattleShips.API.Library.Requests;
 using BattleShips.API.Library.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-using BattleShips.API.Data.Models;
-using System.Numerics;
-using GetFullGameStateResponseDto = BattleShips.API.Library.Responses.GetFullGameStateResponseDto;
 
 namespace BattleShips.API.Controllers;
 
@@ -53,8 +50,6 @@ public class GameController : ControllerBase
             });
     }
 
-
-    //TODO JOIN GAME
     [HttpPost]
     [Route("join/{gameCode}")]
     public async Task<ActionResult<JoinGameResponseDto>> JoinGame(string gameCode)
