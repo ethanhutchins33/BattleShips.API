@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using BattleShips.API.Data.Access;
 using BattleShips.API.Data.Models;
-using BattleShips.API.Library;
 using FakeItEasy;
 
 namespace BattleShips.API.Library.Tests;
