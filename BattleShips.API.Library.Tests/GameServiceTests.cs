@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using BattleShips.API.Data.Access;
 using BattleShips.API.Data.Models;
+using BattleShips.API.Library;
 using FakeItEasy;
 
 namespace BattleShips.API.Library.Tests;
@@ -152,6 +153,111 @@ public class GameServiceTests
 
         Assert.That(result.GameCode, Is.EqualTo(testGame1.GameCode));
         Assert.That(result.GameCode, Is.Not.EqualTo(testGame2.GameCode));
+    }
+
+    [Test]
+    public void NewBoardAsync_returns_current_board_if_it_already_exists()
+    {
+
+        const int testPlayerId = 1;
+        const int testGameId = 1;
+
+        var expectedGetAllBoardsResult = new List<Board>
+        {
+            new Board
+            {
+                Id = 1,
+                GameId = 1,
+                IsReady = false,
+                PlayerId = 1,
+            },
+            new Board()
+            {
+                Id = 2,
+                GameId = 1,
+                IsReady = false,
+                PlayerId = 2,
+            }
+        };
+
+        A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardsResult.AsQueryable());
+
+        var result = _sut.NewBoardAsync(testPlayerId, testGameId);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Result, Is.TypeOf<Board>());
+        Assert.That(result.Result.GameId, Is.EqualTo(testGameId));
+    }
+
+    [Test]
+    public void NewBoardAsync_returns_new_board_if_it_does_NOT_exist()
+    {
+
+        var testPlayerId = 1;
+        var testGameId = 1;
+
+        var expectedGetAllBoardsResult = new List<Board>();
+
+        var expectedBoard = new Board()
+        {
+            PlayerId = testPlayerId,
+            GameId = testGameId,
+        };
+
+        A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardsResult.AsQueryable());
+
+        A.CallTo(() => _boardRepository.AddAsync(A<Board>._)).Returns(expectedBoard);
+
+        var result = _sut.NewBoardAsync(testPlayerId, testGameId);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Result, Is.TypeOf<Board>());
+        Assert.That(result.Result.GameId, Is.EqualTo(testGameId));
+    }
+
+    [Test]
+    public void AddShipsToBoardAsync_adds_correct_number_of_ships_to_db()
+    {
+        const int testPlayerId = 1;
+        const string testGameCode = "test1234";
+
+        string[,] testShips =
+        {
+            { "S", "S", "S", "", "", "", "" },
+            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "S", "S", "S" },
+        };
+
+        var expectedGetAllGameList = new List<Game>
+        {
+            new()
+            {
+                Id = 1,
+                GameCode = testGameCode,
+            },
+        };
+
+        var expectedGetAllBoardList = new List<Board>
+        {
+            new() 
+            {
+                Id = 1,
+                PlayerId = testPlayerId,
+                GameId = 1,
+            }
+        };
+
+        A.CallTo(() => _gameRepository.GetAll()).Returns(expectedGetAllGameList.AsQueryable());
+        A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardList.AsQueryable());
+
+        _ = _sut.AddShipsToBoardAsync(testShips, testGameCode, testPlayerId);
+
+        A.CallTo(() => _shipRepository.AddAsync(A<Ship>._))
+            .MustHaveHappenedANumberOfTimesMatching((n) => n == 6);
     }
 
     [Test]
