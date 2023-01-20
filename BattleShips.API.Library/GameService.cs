@@ -1,6 +1,5 @@
 ﻿using BattleShips.API.Data.Access;
 using BattleShips.API.Data.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace BattleShips.API.Library;
 
@@ -156,20 +155,6 @@ public class GameService : IGameService
         }
     }
 
-    private static string GenerateRandomCode()
-    {
-        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var stringChars = new char[8];
-        var random = new Random();
-
-        for (var i = 0; i < stringChars.Length; i++)
-        {
-            stringChars[i] = chars[random.Next(chars.Length)];
-        }
-
-        return new string(stringChars);
-    }
-
     public async Task<Player?> GetOpponentAsync(int gameId, int hostPlayerId)
     {
         var game = await _gameRepository.GetAsync(gameId);
@@ -183,14 +168,13 @@ public class GameService : IGameService
         {
             return await _playerRepository.GetAsync(p2);
         } 
-        else if(p2 == hostPlayerId)
+        
+        if(p2 == hostPlayerId)
         {
             return await _playerRepository.GetAsync(p1);
         }
-        else
-        {
-            return null;
-        }
+
+        return null;
     }
 
     public Board? GetBoard(int gameId, int playerId)
@@ -215,22 +199,27 @@ public class GameService : IGameService
 
     }
 
-    public async Task<Shot?> GetLastShotAsync(int gameId)
+    public Shot? GetLastShot(int gameId)
     {
-        var boards = _boardRepository.GetAll().Where(b => b.GameId == gameId).ToList();
+        var boards = _boardRepository.GetAll()!
+            .Where(b => b.GameId == gameId)
+            .ToList();
 
         if (boards == null)
         {
-            throw new NullReferenceException($"{nameof(GetLastShotAsync)}: No boards found in database with Game Id: {gameId}");
+            throw new NullReferenceException($"{nameof(GetLastShot)}: No boards found in database with Game Id: {gameId}");
         }
 
         var shots = new List<Shot>();
 
         foreach (var board in boards)
         {
-            await _shotRepository.GetAll()
-                .Where(s => s.BoardId == board.Id)
-                .ForEachAsync(s => shots.Add(s));
+            foreach(var shot in 
+                    _shotRepository.GetAll()!
+                    .Where(s => s.BoardId == board.Id))
+            {
+                shots.Add(shot);
+            }
         }
 
         if (!shots.Any())
@@ -242,38 +231,28 @@ public class GameService : IGameService
 
         if (result == null)
         {
-            throw new NullReferenceException($"{nameof(GetLastShotAsync)}: No shot found in database with shot Id: {result.Id}");
+            throw new NullReferenceException($"{nameof(GetLastShot)}: No shot found in database");
         }
 
         return result;
 
     }
 
-    private List<Ship> GetShipsByBoardId(int boardId)
-    {
-        var ships = _shipRepository.GetAll();
+    
 
-        if (ships == null)
-        {
-            throw new NullReferenceException($"{nameof(GetShipsByBoardId)}: No ships found");
-        }
-
-        return ships.Where(Ship => Ship.BoardId == boardId).ToList();
-    }
-
-    public async Task<Shot?> CheckShot(int boardId, int x, int y)
+    public async Task<Shot?> CheckShotAsync(int boardId, int x, int y)
     {
 
         var board = await _boardRepository.GetAsync(boardId);
         if (board == null)
         {
-            throw new NullReferenceException($"{nameof(CheckShot)}: No board found with board Id: {boardId}");
+            throw new NullReferenceException($"{nameof(CheckShotAsync)}: No board found with board Id: {boardId}");
         }
 
         var ships = GetShipsByBoardId(boardId);
         if (!ships.Any())
         {
-            throw new NullReferenceException($"{nameof(CheckShot)}: No ships found on board with board Id: {boardId}");
+            throw new NullReferenceException($"{nameof(CheckShotAsync)}: No ships found on board with board Id: {boardId}");
         }
 
         Shot? result;
@@ -302,7 +281,7 @@ public class GameService : IGameService
         }
         if (result == null)
         {
-            throw new NullReferenceException($"{nameof(CheckShot)}: Could not add new shot to shot repo");
+            throw new NullReferenceException($"{nameof(CheckShotAsync)}: Could not add new shot to shot repo");
         }
 
         return result;
@@ -390,7 +369,7 @@ public class GameService : IGameService
     //        var p2Board = GetBoard(gameId, (int)game.Player2Id);
     //    }
 
-    //    var lastShot = await GetLastShotAsync(gameId);
+    //    var lastShot = await GetLastShot(gameId);
 
     //    if (lastShot == null)
     //    {
@@ -405,7 +384,7 @@ public class GameService : IGameService
     //    }
     //}
 
-    public async Task<DateTime> SetGameStartedDateTime(int gameId)
+    public async Task<DateTime> SetGameStartedDateTimeAsync(int gameId)
     {
         var game = await _gameRepository.GetAsync(gameId);
 
@@ -419,5 +398,31 @@ public class GameService : IGameService
         await _gameRepository.UpdateAsync(game);
 
         return game.DateStarted;
+    }
+
+    private static string GenerateRandomCode()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var stringChars = new char[8];
+        var random = new Random();
+
+        for (var i = 0; i < stringChars.Length; i++)
+        {
+            stringChars[i] = chars[random.Next(chars.Length)];
+        }
+
+        return new string(stringChars);
+    }
+
+    private List<Ship> GetShipsByBoardId(int boardId)
+    {
+        var ships = _shipRepository.GetAll();
+
+        if (ships == null)
+        {
+            throw new NullReferenceException($"{nameof(GetShipsByBoardId)}: No ships found");
+        }
+
+        return ships.Where(Ship => Ship.BoardId == boardId).ToList();
     }
 }
