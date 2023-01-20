@@ -16,6 +16,6 @@ public interface IGameService
     Task ReadyUpAsync(string gameCode, int playerId);
     string[,] GetShipsMatrix(int boardId);
     Task<bool> GetLobbyReadyStatusAsync(int gameId);
-    Task<int> GetStarterId(int gameId);
-    Task SetGameStartedDateTime(int gameId);
+    //Task<int> GetPlayerTurnBoardId(int gameId);
+    Task<DateTime> SetGameStartedDateTime(int gameId);
 }

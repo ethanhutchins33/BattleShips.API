@@ -140,27 +140,35 @@ public class GameController : ControllerBase
     {
         var playersReady = await _gameService.GetLobbyReadyStatusAsync(gameId);
 
-        
-
         return Ok(new GetLobbyDetailsResponseDto
         {
             LobbyStatus = playersReady
         });
     }
 
-    [HttpGet]
-    [Route("start/{gameId}")]
+    [HttpPost]
+    [Route("start/{gameId:int}")]
     public async Task<ActionResult<StartResponseDto>> StartGame(int gameId)
     {
-        var starterId = await _gameService.GetStarterId(gameId);
-
-        await _gameService.SetGameStartedDateTime(gameId);
+        var dateGameStarted = await _gameService.SetGameStartedDateTime(gameId);
 
         return Ok(new StartResponseDto
         {
-            StarterId = starterId
+            DateGameStarted = dateGameStarted
         });
     }
+
+    //[HttpGet]
+    //[Route("first/{gameId}")]
+    //public async Task<ActionResult<GetPlayerTurnResponseDto>> GetPlayerTurn(int gameId)
+    //{
+    //    var firstPlayer = await _gameService.GetPlayerTurnBoardId(gameId);
+
+    //    return Ok(new GetPlayerTurnResponseDto
+    //    {
+
+    //    });
+    //}
 
     [HttpGet]
     [Route("state/{gameId}/{hostId}")]

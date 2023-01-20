@@ -66,11 +66,12 @@ public class GameService : IGameService
             throw new NullReferenceException($"No player found with Player ID: {joiningPlayerId}");
         }
 
-        if (game.Player1Id == player.Id)
+        if (game.Player1Id == player.Id || game.Player2Id == player.Id)
         {
             return game;
         }
-        else
+
+        if (game.Player2Id == null)
         {
             game.Player2Id = player.Id;
             await _gameRepository.UpdateAsync(game);
@@ -234,7 +235,7 @@ public class GameService : IGameService
 
         if (!shots.Any())
         {
-            throw new NullReferenceException($"{nameof(GetLastShotAsync)}: No shots found in database with Board Ids: {boards[0].Id} & {boards[1].Id}");
+            return null;
         }
 
         var result = shots.OrderBy((shot) => shot.Id).LastOrDefault();
@@ -374,19 +375,37 @@ public class GameService : IGameService
         return p1ReadyStatus && p2ReadyStatus;
     }
 
-    public async Task<int> GetStarterId(int gameId)
-    {
-        var game = await _gameRepository.GetAsync(gameId);
+    //public async Task<int> GetPlayerTurnBoardId(int gameId)
+    //{
+    //    var game = await _gameRepository.GetAsync(gameId);
 
-        if (game == null)
-        {
-            throw new NullReferenceException($"{nameof(GetStarterId)}: No game found with Game Id: {gameId}");
-        }
+    //    if (game == null)
+    //    {
+    //        throw new NullReferenceException($"{nameof(GetPlayerTurnBoardId)}: No game found with Game Id: {gameId}");
+    //    }
 
-        return game.Player1Id;
-    }
+    //    var p1Board = GetBoard(gameId, game.Player1Id);
+    //    if (game.Player2Id != null)
+    //    {
+    //        var p2Board = GetBoard(gameId, (int)game.Player2Id);
+    //    }
 
-    public async Task SetGameStartedDateTime(int gameId)
+    //    var lastShot = await GetLastShotAsync(gameId);
+
+    //    if (lastShot == null)
+    //    {
+    //        return game.Player1Id;
+    //    }
+
+    //    var board = _boardRepository.GetAsync(lastShot.BoardId);
+
+    //    if (lastShot.BoardId == board.Id)
+    //    {
+
+    //    }
+    //}
+
+    public async Task<DateTime> SetGameStartedDateTime(int gameId)
     {
         var game = await _gameRepository.GetAsync(gameId);
 
@@ -398,5 +417,7 @@ public class GameService : IGameService
         game.DateStarted = DateTime.Now;
 
         await _gameRepository.UpdateAsync(game);
+
+        return game.DateStarted;
     }
 }

@@ -21,7 +21,6 @@ where TContext : DbContext
             {
                 _context.Set<TEntity>().Add(entity);
                 await _context.SaveChangesAsync();
-                var newRecordId = entity.Id;
                 return entity;
             }
         }
