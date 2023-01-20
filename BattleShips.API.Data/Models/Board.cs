@@ -8,4 +8,5 @@ public class Board : IEntity
     public int Id { get; set; }
     public int PlayerId { get; set; }
     public int GameId { get; set; }
+    public bool IsReady { get; set; } = false;
 }

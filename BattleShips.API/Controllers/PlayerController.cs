@@ -27,6 +27,7 @@ public class PlayerController : ControllerBase
     {
         HttpContext.VerifyUserHasAnyAcceptedScope(Scope);
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
+        var userName = HttpContext.User.Claims.Single(c => c.Type == "name").Value;
         var profileToReturn = _playerService.Get(Guid.Parse(azureId));
 
         if (profileToReturn != null)
@@ -34,7 +35,7 @@ public class PlayerController : ControllerBase
             return Ok(profileToReturn);
         }
 
-        profileToReturn = await _playerService.Add(Guid.Parse(azureId));
+        profileToReturn = await _playerService.AddAsync(Guid.Parse(azureId), userName);
 
         return Ok(profileToReturn);
     }

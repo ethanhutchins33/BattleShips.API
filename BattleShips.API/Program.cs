@@ -20,6 +20,7 @@ builder.Services.AddScoped<IRepository<Board>, BoardRepository>();
 builder.Services.AddScoped<IRepository<Player>, PlayerRepository>();
 builder.Services.AddScoped<IRepository<Ship>, ShipRepository>();
 builder.Services.AddScoped<IRepository<ShipType>, ShipTypeRepository>();
+builder.Services.AddScoped<IRepository<Shot>, ShotRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 
@@ -53,13 +54,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-    //var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
     //dbContext.Database.EnsureDeleted();
-    //dbContext.Database.EnsureCreated();
+    dbContext.Database.EnsureCreated();
     //dbContext.Database.Migrate();
-//}
+}
 
 if (app.Environment.IsDevelopment())
 {

@@ -11,4 +11,5 @@ public class BattleShipsContext : DbContext
     public DbSet<Player>? Players { get; set; }
     public DbSet<Ship>? Ships { get; set; }
     public DbSet<ShipType>? ShipTypes { get; set; }
+    public DbSet<Shot>? Shots { get; set; }
 }

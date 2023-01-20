@@ -20,21 +20,22 @@ public class PlayerService : IPlayerService
         return player ?? null;
     }
 
-    public async Task<Player?> Get(int id)
+    public async Task<Player?> GetAsync(int id)
     {
-        return await _playerRepository.Get(id);
+        return await _playerRepository.GetAsync(id);
     }
 
-    public async Task<Player?> Add(Guid azureId)
+    public async Task<Player?> AddAsync(Guid azureId, string userName)
     {
-        return await _playerRepository.Add(new Player
+        return await _playerRepository.AddAsync(new Player
         {
             AzureId = azureId,
+            UserName = userName,
         });
     }
 
-    public async Task<Player?> Remove(int id)
+    public async Task<Player?> RemoveAsync(int id)
     {
-        return await _playerRepository.Delete(id);
+        return await _playerRepository.DeleteAsync(id);
     }
 }
