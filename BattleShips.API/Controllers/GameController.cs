@@ -116,7 +116,7 @@ public class GameController : ControllerBase
         Console.WriteLine(shotFiredRequestDto.BoardId);
         Console.WriteLine($"Shot: ({shotFiredRequestDto.X}, {shotFiredRequestDto.Y})");
 
-        var result = await _gameService.CheckShot
+        var result = await _gameService.CheckShotAsync
             (
                 shotFiredRequestDto.BoardId,
                 shotFiredRequestDto.X,
@@ -150,7 +150,7 @@ public class GameController : ControllerBase
     [Route("start/{gameId:int}")]
     public async Task<ActionResult<StartResponseDto>> StartGame(int gameId)
     {
-        var dateGameStarted = await _gameService.SetGameStartedDateTime(gameId);
+        var dateGameStarted = await _gameService.SetGameStartedDateTimeAsync(gameId);
 
         return Ok(new StartResponseDto
         {
@@ -241,9 +241,9 @@ public class GameController : ControllerBase
 
     [HttpGet]
     [Route("last/{gameId}")]
-    public async Task<ActionResult<GetGameStateResponseDto>> GetGameState(int gameId)
+    public ActionResult<GetGameStateResponseDto> GetGameState(int gameId)
     {
-        var lastShot = await _gameService.GetLastShotAsync(gameId);
+        var lastShot = _gameService.GetLastShot(gameId);
 
         if (lastShot == null)
         {
