@@ -594,22 +594,188 @@ public class GameServiceTests
     public void GetShipsMatrix()
     {
         //Arrange
+        var testBoardId = 1;
+
+        var expectedGetAllShipsResult = new List<Ship>()
+        {
+            new()
+            {
+                Id = 1,
+                BoardId = testBoardId,
+                PosX = 1,
+                PosY = 1,
+            },
+            new()
+            {
+                Id = 2,
+                BoardId = testBoardId,
+                PosX = 2,
+                PosY = 2,
+            },
+            new()
+            {
+                Id = 3,
+                BoardId = testBoardId,
+                PosX = 3,
+                PosY = 3,
+            },
+            new()
+            {
+                Id = 4,
+                BoardId = testBoardId,
+                PosX = 4,
+                PosY = 4,
+            },
+        };
+
+        A.CallTo(() => _shipRepository.GetAll())
+            .Returns(expectedGetAllShipsResult.AsQueryable());
+
+        string[,] expectedShipArray =
+        {
+            { "", "", "", "", "", "", "" },
+            { "", "S", "", "", "", "", "" },
+            { "", "", "S", "", "", "", "" },
+            { "", "", "", "S", "", "", "" },
+            { "", "", "", "", "S", "", "" },
+            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "", "", "" },
+        };
 
         //Act
+        var result = _sut.GetShipsMatrix(testBoardId);
 
         //Assert
-
+        Assert.That(result, Is.EqualTo(expectedShipArray));
     }
 
     [Test]
-    public void GetLobbyReadyStatusAsync()
+    public void GetLobbyReadyStatusAsync_should_return_true_if_both_players_ready()
     {
+        const int testGameId = 5;
+        const int testPlayer1Id = 2;
+        const int testPlayer2Id = 3;
+
         //Arrange
+        var expectedGame = new Game
+        {
+            Id = testGameId,
+            Player1Id = testPlayer1Id,
+            Player2Id = testPlayer2Id,
+        };
+
+        A.CallTo(() => _gameRepository.GetAsync(An<int>._))
+            .Returns(expectedGame);
+
+        var expectedGetAllBoardsResult = new List<Board>()
+        {
+            new()
+            {
+                Id = 1,
+                GameId = testGameId,
+                PlayerId = testPlayer1Id,
+                IsReady = true,
+            },
+            new()
+            {
+                Id = 2,
+                GameId = testGameId,
+                PlayerId = testPlayer2Id,
+                IsReady = true,
+            }
+        };
+
+        A.CallTo(() => _boardRepository.GetAll())
+            .Returns(expectedGetAllBoardsResult.AsQueryable());
 
         //Act
+        var result = _sut.GetLobbyReadyStatusAsync(testGameId);
+        
+        //Assert
+        Assert.That(result.Result, Is.True);
+    }
+
+    [Test]
+    public void GetLobbyReadyStatusAsync_should_return_false_if_one_player_is_NOT_ready()
+    {
+        const int testGameId = 5;
+        const int testPlayer1Id = 2;
+        const int testPlayer2Id = 3;
+
+        //Arrange
+        var expectedGame = new Game
+        {
+            Id = testGameId,
+            Player1Id = testPlayer1Id,
+            Player2Id = testPlayer2Id,
+        };
+
+        A.CallTo(() => _gameRepository.GetAsync(An<int>._))
+            .Returns(expectedGame);
+
+        var expectedGetAllBoardsResult = new List<Board>()
+        {
+            new()
+            {
+                Id = 1,
+                GameId = testGameId,
+                PlayerId = testPlayer1Id,
+                IsReady = true,
+            },
+            new()
+            {
+                Id = 2,
+                GameId = testGameId,
+                PlayerId = testPlayer2Id,
+                IsReady = false,
+            }
+        };
+
+        A.CallTo(() => _boardRepository.GetAll())
+            .Returns(expectedGetAllBoardsResult.AsQueryable());
+
+        //Act
+        var result = _sut.GetLobbyReadyStatusAsync(testGameId);
 
         //Assert
+        Assert.That(result.Result, Is.False);
+    }
 
+    [Test]
+    public void GetLobbyReadyStatusAsync_should_return_false_if_player2_has_not_joined_game_yet()
+    {
+        const int testGameId = 5;
+        const int testPlayer1Id = 2;
+
+        //Arrange
+        var expectedGame = new Game
+        {
+            Id = testGameId,
+            Player1Id = testPlayer1Id,
+        };
+
+        A.CallTo(() => _gameRepository.GetAsync(An<int>._))
+            .Returns(expectedGame);
+
+        var expectedGetAllBoardsResult = new List<Board>()
+        {
+            new()
+            {
+                Id = 1,
+                GameId = testGameId,
+                PlayerId = testPlayer1Id,
+                IsReady = true,
+            },
+        };
+
+        A.CallTo(() => _boardRepository.GetAll())
+            .Returns(expectedGetAllBoardsResult.AsQueryable());
+
+        //Act
+        var result = _sut.GetLobbyReadyStatusAsync(testGameId);
+
+        //Assert
+        Assert.That(result.Result, Is.False);
     }
 
     [Test]

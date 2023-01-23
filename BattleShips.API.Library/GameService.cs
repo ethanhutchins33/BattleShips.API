@@ -313,7 +313,15 @@ public class GameService : IGameService
     {
         var ships = GetShipsByBoardId(boardId);
 
-        var matrix = new string[7,7];
+        var matrix = new string[7, 7];
+
+        for (var i = 0; i < 7; i++)
+        {
+            for (var j = 0; j < 7; j++)
+            {
+                matrix[i, j] = "";
+            }
+        }
 
         ships.ForEach(ship =>
         {
@@ -331,25 +339,21 @@ public class GameService : IGameService
             throw new NullReferenceException($"{nameof(GetLobbyReadyStatusAsync)}: No game found with Game Id: {gameId}");
         }
 
-
-        var boards = _boardRepository.GetAll();
-        if (boards == null)
-        {
-            throw new NullReferenceException($"{nameof(GetLobbyReadyStatusAsync)}: No boards found");
-        }
-
-        var p1ReadyStatus = boards.FirstOrDefault(b => b.GameId == gameId && b.PlayerId == game.Player1Id)!.IsReady;
-        var p2 = boards.FirstOrDefault(b => b.GameId == gameId && b.PlayerId == game.Player2Id);
-        var p2ReadyStatus = false;
-
-        if (p2 == null)
+        if (game.Player2Id == null)
         {
             return false;
         }
-        else
+
+        var p1ReadyStatus = GetBoard(game.Id, game.Player1Id)!.IsReady;
+
+        var p2Board = GetBoard(game.Id, (int)game.Player2Id);
+
+        if (p2Board == null)
         {
-            p2ReadyStatus = p2.IsReady;
+            throw new NullReferenceException($"{nameof(GetLobbyReadyStatusAsync)}: No board found with Game Id: {game.Id} and Player Id: {game.Player2Id}");
         }
+
+        var p2ReadyStatus = p2Board.IsReady;
 
         return p1ReadyStatus && p2ReadyStatus;
     }
