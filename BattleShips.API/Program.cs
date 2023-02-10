@@ -1,10 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
 using BattleShips.API.Data.Access;
 using BattleShips.API.Data.Access.Repositories;
 using BattleShips.API.Data.Models;
 using BattleShips.API.Library;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,16 +39,16 @@ builder.Services.AddDbContext<BattleShipsContext>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: "AllowSpecificOriginPolicy",
+    options.AddPolicy("AllowSpecificOriginPolicy",
         policy =>
         {
             policy
-            .WithOrigins(
-                "https://bsstaticstorage.z6.web.core.windows.net", 
-                "http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+                .WithOrigins(
+                    "https://bsstaticstorage.z6.web.core.windows.net",
+                    "http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 

@@ -13,8 +13,8 @@ namespace BattleShips.API.Controllers;
 [Route("api/player")]
 public class PlayerController : ControllerBase
 {
-    private readonly IPlayerService _playerService;
     private static readonly string[] Scope = { "battleships.api" };
+    private readonly IPlayerService _playerService;
 
     public PlayerController(IPlayerService playerService)
     {
@@ -30,10 +30,7 @@ public class PlayerController : ControllerBase
         var userName = HttpContext.User.Claims.Single(c => c.Type == "name").Value;
         var profileToReturn = _playerService.Get(Guid.Parse(azureId));
 
-        if (profileToReturn != null)
-        {
-            return Ok(profileToReturn);
-        }
+        if (profileToReturn != null) return Ok(profileToReturn);
 
         profileToReturn = await _playerService.AddAsync(Guid.Parse(azureId), userName);
 

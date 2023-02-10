@@ -1,15 +1,14 @@
-using NUnit.Framework;
 using BattleShips.API.Data.Access;
-using BattleShips.API.Data.Access.Repositories;
 using BattleShips.API.Data.Models;
 using FakeItEasy;
+using NUnit.Framework;
 
 namespace BattleShips.API.Library.Tests;
 
 public class GameServiceTests
 {
-    private readonly IRepository<Game> _gameRepository;
     private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<Game> _gameRepository;
     private readonly IRepository<Player> _playerRepository;
     private readonly IRepository<Ship> _shipRepository;
     private readonly IRepository<ShipType> _shipTypeRepository;
@@ -37,7 +36,6 @@ public class GameServiceTests
     [SetUp]
     public void Setup()
     {
-        
     }
 
     [Test]
@@ -49,16 +47,16 @@ public class GameServiceTests
             Id = 1
         };
 
-        var fakeGame = new Game()
+        var fakeGame = new Game
         {
             Id = 1,
             GameCode = "abcd1234",
-            Player1Id = fakePlayer.Id,
+            Player1Id = fakePlayer.Id
         };
 
         A.CallTo(() => _playerRepository.GetAsync(An<int>._)).Returns(fakePlayer);
         A.CallTo(() => _gameRepository.AddAsync(A<Game>._)).Returns(fakeGame);
-        
+
         //Act
         var result = _sut.SetupNewGameAsync(fakePlayer.Id);
 
@@ -72,16 +70,16 @@ public class GameServiceTests
     public void AddPlayerToGameAsync_returns_correct_player1_if_already_joined()
     {
         //Arrange
-        var testPlayer = new Player()
+        var testPlayer = new Player
         {
-            Id = 1,
+            Id = 1
         };
 
         var testGame = new Game
         {
             Id = 1,
             DateCreated = DateTime.Now,
-            Player1Id = 1,
+            Player1Id = 1
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._)).Returns(testGame);
@@ -98,16 +96,16 @@ public class GameServiceTests
     public void AddPlayerToGameAsync_returns_correct_player2_if_not_joined()
     {
         //Arrange
-        var testPlayer = new Player()
+        var testPlayer = new Player
         {
-            Id = 2,
+            Id = 2
         };
 
         var testGame = new Game
         {
             Id = 1,
             DateCreated = DateTime.Now,
-            Player1Id = 1,
+            Player1Id = 1
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._)).Returns(testGame);
@@ -124,9 +122,9 @@ public class GameServiceTests
     public void AddPlayerToGameAsync_wont_accept_third_joining_player_if_2_players_already_joined()
     {
         //Arrange
-        var testPlayer = new Player()
+        var testPlayer = new Player
         {
-            Id = 3,
+            Id = 3
         };
 
         var testGame = new Game
@@ -134,7 +132,7 @@ public class GameServiceTests
             Id = 1,
             DateCreated = DateTime.Now,
             Player1Id = 1,
-            Player2Id = 2,
+            Player2Id = 2
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._)).Returns(testGame);
@@ -155,13 +153,13 @@ public class GameServiceTests
         var testGame1 = new Game
         {
             Id = 1,
-            GameCode = "testCode1",
+            GameCode = "testCode1"
         };
 
         var testGame2 = new Game
         {
             Id = 2,
-            GameCode = "testCode2",
+            GameCode = "testCode2"
         };
 
         var listGames = new List<Game> { testGame1, testGame2 };
@@ -185,19 +183,19 @@ public class GameServiceTests
 
         var expectedGetAllBoardsResult = new List<Board>
         {
-            new Board
+            new()
             {
                 Id = 1,
                 GameId = 1,
                 IsReady = false,
-                PlayerId = 1,
+                PlayerId = 1
             },
-            new Board()
+            new()
             {
                 Id = 2,
                 GameId = 1,
                 IsReady = false,
-                PlayerId = 2,
+                PlayerId = 2
             }
         };
 
@@ -221,10 +219,10 @@ public class GameServiceTests
 
         var expectedGetAllBoardsResult = new List<Board>();
 
-        var expectedBoard = new Board()
+        var expectedBoard = new Board
         {
             PlayerId = testPlayerId,
-            GameId = testGameId,
+            GameId = testGameId
         };
 
         A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardsResult.AsQueryable());
@@ -255,7 +253,7 @@ public class GameServiceTests
             { "", "", "", "S", "", "", "" },
             { "", "", "", "", "S", "", "" },
             { "", "", "", "", "", "S", "" },
-            { "", "", "", "", "", "", "S" },
+            { "", "", "", "", "", "", "S" }
         };
 
         var expectedGetAllGameList = new List<Game>
@@ -263,17 +261,17 @@ public class GameServiceTests
             new()
             {
                 Id = 1,
-                GameCode = testGameCode,
-            },
+                GameCode = testGameCode
+            }
         };
 
         var expectedGetAllBoardList = new List<Board>
         {
-            new() 
+            new()
             {
                 Id = 1,
                 PlayerId = testPlayerId,
-                GameId = 1,
+                GameId = 1
             }
         };
 
@@ -285,7 +283,7 @@ public class GameServiceTests
 
         //Assert
         A.CallTo(() => _shipRepository.AddAsync(A<Ship>._))
-            .MustHaveHappenedANumberOfTimesMatching((n) => n == 7);
+            .MustHaveHappenedANumberOfTimesMatching(n => n == 7);
     }
 
     [Test]
@@ -296,33 +294,33 @@ public class GameServiceTests
         const int testPlayerId2 = 2;
         const int testGameId = 1;
 
-        var expectedGame = new Game()
+        var expectedGame = new Game
         {
             Id = testGameId,
             Player1Id = testPlayerId1,
-            Player2Id = testPlayerId2,
+            Player2Id = testPlayerId2
         };
 
-        var expectedPlayer1 = new Player()
+        var expectedPlayer1 = new Player
         {
-            Id = testPlayerId1,
+            Id = testPlayerId1
         };
 
-        var expectedPlayer2 = new Player()
+        var expectedPlayer2 = new Player
         {
-            Id = testPlayerId2,
+            Id = testPlayerId2
         };
 
         A.CallTo(() => _gameRepository
-            .GetAsync(An<int>._))
+                .GetAsync(An<int>._))
             .Returns(expectedGame);
 
         A.CallTo(() => _playerRepository
-            .GetAsync(An<int>.That.Matches(i => i == testPlayerId1)))
+                .GetAsync(An<int>.That.Matches(i => i == testPlayerId1)))
             .Returns(expectedPlayer1);
 
         A.CallTo(() => _playerRepository
-            .GetAsync(An<int>.That.Matches(i => i == testPlayerId2)))
+                .GetAsync(An<int>.That.Matches(i => i == testPlayerId2)))
             .Returns(expectedPlayer2);
 
         //Act
@@ -332,16 +330,16 @@ public class GameServiceTests
         //Assert
         Assert.That(result1.Result.Id, Is.EqualTo(testPlayerId2));
         Assert.That(result2.Result.Id, Is.EqualTo(testPlayerId1));
-
     }
 
     [Test]
     public void GetBoard_returns_correct_board()
     {
         //Arrange
-        var board1 = new Board { 
-            GameId = 1, 
-            IsReady = false, 
+        var board1 = new Board
+        {
+            GameId = 1,
+            IsReady = false,
             PlayerId = 1
         };
 
@@ -372,11 +370,11 @@ public class GameServiceTests
         const int testGameId = 1;
         const int lastShotId = 3;
 
-        var expectedGetAllBoardsResult = new List<Board>()
+        var expectedGetAllBoardsResult = new List<Board>
         {
             new()
             {
-                Id = 1, 
+                Id = 1,
                 IsReady = true,
                 GameId = testGameId,
                 PlayerId = 1
@@ -386,11 +384,11 @@ public class GameServiceTests
                 Id = 2,
                 IsReady = true,
                 GameId = testGameId,
-                PlayerId = 2,
+                PlayerId = 2
             }
         };
 
-        var expectedGetAllShotsResult = new List<Shot>()
+        var expectedGetAllShotsResult = new List<Shot>
         {
             new()
             {
@@ -398,7 +396,7 @@ public class GameServiceTests
                 BoardId = 1,
                 X = 1,
                 Y = 1,
-                ShotStatus = "hit",
+                ShotStatus = "hit"
             },
             new()
             {
@@ -406,7 +404,7 @@ public class GameServiceTests
                 BoardId = 2,
                 X = 3,
                 Y = 3,
-                ShotStatus = "hit",
+                ShotStatus = "hit"
             },
             new()
             {
@@ -414,8 +412,8 @@ public class GameServiceTests
                 BoardId = 1,
                 X = 2,
                 Y = 2,
-                ShotStatus = "missed",
-            },
+                ShotStatus = "missed"
+            }
         };
 
         A.CallTo(() => _boardRepository.GetAll())
@@ -439,40 +437,40 @@ public class GameServiceTests
         const int testShipX = 2;
         const int testShipY = 2;
 
-        var expectedBoard = new Board()
+        var expectedBoard = new Board
         {
-            Id = 1,
+            Id = 1
         };
 
         A.CallTo(() => _boardRepository.GetAsync(An<int>._))
             .Returns(expectedBoard);
 
-        var expectedGetAllShipsResult = new List<Ship>()
+        var expectedGetAllShipsResult = new List<Ship>
         {
             new()
             {
                 Id = 1,
                 BoardId = 1,
                 PosX = 1,
-                PosY = 1,
+                PosY = 1
             },
             new()
             {
                 Id = 2,
                 BoardId = testBoardId,
                 PosX = testShipX,
-                PosY = testShipY,
+                PosY = testShipY
             },
             new()
             {
                 Id = 3,
                 BoardId = testBoardId,
                 PosX = 3,
-                PosY = 3,
-            },
+                PosY = 3
+            }
         };
 
-        var expectedShot = new Shot()
+        var expectedShot = new Shot
         {
             ShotStatus = "hit"
         };
@@ -498,33 +496,33 @@ public class GameServiceTests
         const int testShipX = 2;
         const int testShipY = 2;
 
-        var expectedBoard = new Board()
+        var expectedBoard = new Board
         {
-            Id = 1,
+            Id = 1
         };
 
         A.CallTo(() => _boardRepository.GetAsync(An<int>._))
             .Returns(expectedBoard);
 
-        var expectedGetAllShipsResult = new List<Ship>()
+        var expectedGetAllShipsResult = new List<Ship>
         {
             new()
             {
                 Id = 1,
                 BoardId = 1,
                 PosX = 1,
-                PosY = 1,
+                PosY = 1
             },
             new()
             {
                 Id = 3,
                 BoardId = testBoardId,
                 PosX = 3,
-                PosY = 3,
-            },
+                PosY = 3
+            }
         };
 
-        var expectedShot = new Shot()
+        var expectedShot = new Shot
         {
             ShotStatus = "missed"
         };
@@ -551,12 +549,11 @@ public class GameServiceTests
         const int testGameId = 1;
         const int testPlayerId = 1;
 
-        var testBoard = new Board()
+        var testBoard = new Board
         {
-
             GameId = testGameId,
             PlayerId = testPlayerId,
-            IsReady = false,
+            IsReady = false
         };
 
         var expectedGetAllGameList = new List<Game>
@@ -564,8 +561,8 @@ public class GameServiceTests
             new()
             {
                 Id = testGameId,
-                GameCode = testGameCode,
-            },
+                GameCode = testGameCode
+            }
         };
 
         //GetGameByGameCode calls .GetAll()
@@ -580,7 +577,7 @@ public class GameServiceTests
 
         A.CallTo(() => _boardRepository.UpdateAsync(A<Board>._))
             .Returns(testBoard);
-        
+
         //Act
         _ = _sut.ReadyUpAsync(testGameCode, testPlayerId);
 
@@ -596,36 +593,36 @@ public class GameServiceTests
         //Arrange
         var testBoardId = 1;
 
-        var expectedGetAllShipsResult = new List<Ship>()
+        var expectedGetAllShipsResult = new List<Ship>
         {
             new()
             {
                 Id = 1,
                 BoardId = testBoardId,
                 PosX = 1,
-                PosY = 1,
+                PosY = 1
             },
             new()
             {
                 Id = 2,
                 BoardId = testBoardId,
                 PosX = 2,
-                PosY = 2,
+                PosY = 2
             },
             new()
             {
                 Id = 3,
                 BoardId = testBoardId,
                 PosX = 3,
-                PosY = 3,
+                PosY = 3
             },
             new()
             {
                 Id = 4,
                 BoardId = testBoardId,
                 PosX = 4,
-                PosY = 4,
-            },
+                PosY = 4
+            }
         };
 
         A.CallTo(() => _shipRepository.GetAll())
@@ -639,7 +636,7 @@ public class GameServiceTests
             { "", "", "", "S", "", "", "" },
             { "", "", "", "", "S", "", "" },
             { "", "", "", "", "", "", "" },
-            { "", "", "", "", "", "", "" },
+            { "", "", "", "", "", "", "" }
         };
 
         //Act
@@ -661,27 +658,27 @@ public class GameServiceTests
         {
             Id = testGameId,
             Player1Id = testPlayer1Id,
-            Player2Id = testPlayer2Id,
+            Player2Id = testPlayer2Id
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._))
             .Returns(expectedGame);
 
-        var expectedGetAllBoardsResult = new List<Board>()
+        var expectedGetAllBoardsResult = new List<Board>
         {
             new()
             {
                 Id = 1,
                 GameId = testGameId,
                 PlayerId = testPlayer1Id,
-                IsReady = true,
+                IsReady = true
             },
             new()
             {
                 Id = 2,
                 GameId = testGameId,
                 PlayerId = testPlayer2Id,
-                IsReady = true,
+                IsReady = true
             }
         };
 
@@ -690,7 +687,7 @@ public class GameServiceTests
 
         //Act
         var result = _sut.GetLobbyReadyStatusAsync(testGameId);
-        
+
         //Assert
         Assert.That(result.Result, Is.True);
     }
@@ -707,27 +704,27 @@ public class GameServiceTests
         {
             Id = testGameId,
             Player1Id = testPlayer1Id,
-            Player2Id = testPlayer2Id,
+            Player2Id = testPlayer2Id
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._))
             .Returns(expectedGame);
 
-        var expectedGetAllBoardsResult = new List<Board>()
+        var expectedGetAllBoardsResult = new List<Board>
         {
             new()
             {
                 Id = 1,
                 GameId = testGameId,
                 PlayerId = testPlayer1Id,
-                IsReady = true,
+                IsReady = true
             },
             new()
             {
                 Id = 2,
                 GameId = testGameId,
                 PlayerId = testPlayer2Id,
-                IsReady = false,
+                IsReady = false
             }
         };
 
@@ -751,21 +748,21 @@ public class GameServiceTests
         var expectedGame = new Game
         {
             Id = testGameId,
-            Player1Id = testPlayer1Id,
+            Player1Id = testPlayer1Id
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._))
             .Returns(expectedGame);
 
-        var expectedGetAllBoardsResult = new List<Board>()
+        var expectedGetAllBoardsResult = new List<Board>
         {
             new()
             {
                 Id = 1,
                 GameId = testGameId,
                 PlayerId = testPlayer1Id,
-                IsReady = true,
-            },
+                IsReady = true
+            }
         };
 
         A.CallTo(() => _boardRepository.GetAll())
@@ -786,6 +783,5 @@ public class GameServiceTests
         //Act
 
         //Assert
-
     }
 }

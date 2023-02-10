@@ -12,7 +12,7 @@ internal class GameControllerTests
     private IGameService _fakeGameService;
     private IPlayerService _fakePlayerService;
     private GameController _sut;
-    
+
     [SetUp]
     public void Setup()
     {
@@ -48,6 +48,4 @@ internal class GameControllerTests
 
     //    Assert.That(response.Id, Is.EqualTo(1));
     //}
-
-
 }

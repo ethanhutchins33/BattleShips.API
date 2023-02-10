@@ -8,7 +8,9 @@ public interface IGameService
     Task<Game?> AddPlayerToGameAsync(int joiningPlayerId, int gameId);
     Task<Board?> NewBoardAsync(int playerId, int gameId);
     Task AddShipsToBoardAsync(string[,] ships, string gameCode, int playerId);
+
     Task<bool> GetLobbyReadyStatusAsync(int gameId);
+
     //Task<int> GetPlayerTurnBoardId(int gameId);
     Task<DateTime> SetGameStartedDateTimeAsync(int gameId);
     Task<Player?> GetOpponentAsync(int gameId, int hostPlayerId);

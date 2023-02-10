@@ -3,8 +3,8 @@
 namespace BattleShips.API.Data.Access.Repositories;
 
 public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
-where TEntity : class, IEntity
-where TContext : DbContext
+    where TEntity : class, IEntity
+    where TContext : DbContext
 {
     private readonly TContext _context;
 
@@ -28,7 +28,7 @@ where TContext : DbContext
         {
             return null;
         }
-        
+
         return null;
     }
 
@@ -48,10 +48,7 @@ where TContext : DbContext
     {
         try
         {
-            if (id != null)
-            {
-                return await _context.Set<TEntity>().FindAsync(id);
-            }
+            if (id != null) return await _context.Set<TEntity>().FindAsync(id);
         }
         catch
         {
@@ -83,10 +80,7 @@ where TContext : DbContext
             {
                 var entity = await _context.Set<TEntity>().FindAsync(id);
 
-                if (entity != null)
-                {
-                    return entity;
-                }
+                if (entity != null) return entity;
 
                 _context.Set<TEntity>().Remove(entity);
                 await _context.SaveChangesAsync();
@@ -101,5 +95,4 @@ where TContext : DbContext
 
         return null;
     }
-
 }

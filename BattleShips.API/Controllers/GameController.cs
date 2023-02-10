@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BattleShips.API.Library;
+﻿using BattleShips.API.Library;
 using BattleShips.API.Library.Requests;
 using BattleShips.API.Library.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BattleShips.API.Controllers;
 
@@ -30,17 +30,12 @@ public class GameController : ControllerBase
 
         var player = _playerService.Get(Guid.Parse(azureId));
 
-        if(player == null)
-        {
-            return BadRequest($"{nameof(CreateGame)}: Could not find player with Azure Id: {azureId}");
-        }
+        if (player == null) return BadRequest($"{nameof(CreateGame)}: Could not find player with Azure Id: {azureId}");
 
         var newGame = await _gameService.SetupNewGameAsync(player.Id);
 
         if (newGame == null)
-        {
             return StatusCode(500, $"{nameof(CreateGame)}: Could not setup new game with Player Id: {player.Id}");
-        }
 
         return Ok(
             new CreateGameResponseDto
@@ -57,40 +52,31 @@ public class GameController : ControllerBase
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
 
         var player = _playerService.Get(Guid.Parse(azureId));
-        if (player == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Azure ID: {azureId}");
-        }
+        if (player == null) return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Azure ID: {azureId}");
 
         var game = _gameService.GetGameByGameCode(gameCode);
-        if (game == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Game found with Game Code: {gameCode}");
-        }
+        if (game == null) return StatusCode(500, $"{nameof(JoinGame)}: No Game found with Game Code: {gameCode}");
 
         var gameToReturn = await _gameService.AddPlayerToGameAsync(player.Id, game.Id);
         if (gameToReturn == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Game found when trying to add player to Game Id: {game.Id} with PlayerId: {player.Id}");
-        }
+            return StatusCode(500,
+                $"{nameof(JoinGame)}: No Game found when trying to add player to Game Id: {game.Id} with PlayerId: {player.Id}");
 
         //check if board already exists
-        var boardToReturn = _gameService.GetBoard(game.Id, player.Id) ?? 
+        var boardToReturn = _gameService.GetBoard(game.Id, player.Id) ??
                             await _gameService.NewBoardAsync(player.Id, game.Id);
 
         if (boardToReturn == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Board created when trying to add player to Game Id: {game.Id} with PlayerId: {player.Id}");
-        }
+            return StatusCode(500,
+                $"{nameof(JoinGame)}: No Board created when trying to add player to Game Id: {game.Id} with PlayerId: {player.Id}");
 
         return Ok(new JoinGameResponseDto
         {
             GameId = gameToReturn.Id,
             BoardId = boardToReturn.Id,
             PlayerId = player.Id,
-            PlayerName = player.UserName,
+            PlayerName = player.UserName
         });
-
     }
 
     [HttpPost]
@@ -117,16 +103,13 @@ public class GameController : ControllerBase
         Console.WriteLine($"Shot: ({shotFiredRequestDto.X}, {shotFiredRequestDto.Y})");
 
         var result = await _gameService.CheckShotAsync
-            (
-                shotFiredRequestDto.BoardId,
-                shotFiredRequestDto.X,
-                shotFiredRequestDto.Y
-            );
+        (
+            shotFiredRequestDto.BoardId,
+            shotFiredRequestDto.X,
+            shotFiredRequestDto.Y
+        );
 
-        if (result == null)
-        {
-            return NoContent();
-        }
+        if (result == null) return NoContent();
 
         return Ok(new ShotFiredResponseDto
         {
@@ -176,53 +159,41 @@ public class GameController : ControllerBase
     {
         var host = await _playerService.GetAsync(hostId);
 
-        if (host == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Player Id: {hostId}");
-        }
+        if (host == null) return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Player Id: {hostId}");
 
         var hostBoard = _gameService.GetBoard(gameId, host.Id);
 
-        if (hostBoard == null)
-        {
-            return StatusCode(500, $"{nameof(JoinGame)}: No Board found for Player Id: {hostId}");
-        }
+        if (hostBoard == null) return StatusCode(500, $"{nameof(JoinGame)}: No Board found for Player Id: {hostId}");
 
         var hostShipsMatrix = _gameService.GetShipsMatrix(hostBoard.Id);
 
         if (hostShipsMatrix.ToString() == null)
-        {
             return StatusCode(500, $"{nameof(JoinGame)}: No Ships found for Board Id: {hostBoard.Id}");
-        }
 
         var opponent =
             await _gameService.GetOpponentAsync(gameId, hostId);
 
         if (opponent == null)
-        {
             return Ok(new GetFullGameStateResponseDto
             {
                 GameId = gameId,
                 HostId = host.Id,
                 HostName = host.UserName,
                 HostBoardId = hostBoard.Id,
-                HostBoard = hostShipsMatrix,
+                HostBoard = hostShipsMatrix
             });
-        }
 
         var opponentBoard = _gameService.GetBoard(gameId, opponent.Id);
 
         if (opponentBoard == null)
-        {
             return Ok(new GetFullGameStateResponseDto
             {
                 GameId = gameId,
                 HostId = host.Id,
                 HostName = host.UserName,
                 HostBoardId = hostBoard.Id,
-                HostBoard = hostShipsMatrix,
+                HostBoard = hostShipsMatrix
             });
-        }
 
         return Ok(new GetFullGameStateResponseDto
         {
@@ -235,7 +206,7 @@ public class GameController : ControllerBase
             OpponentId = opponent.Id,
             OpponentName = opponent.UserName,
             OpponentBoardId = opponentBoard.Id,
-            OpponentReadyStatus = opponentBoard.IsReady,
+            OpponentReadyStatus = opponentBoard.IsReady
         });
     }
 
@@ -245,13 +216,11 @@ public class GameController : ControllerBase
     {
         var lastShot = _gameService.GetLastShot(gameId);
 
-        if (lastShot == null)
-        {
-            return NoContent();
-        }
+        if (lastShot == null) return NoContent();
 
-        return Ok(new GetGameStateResponseDto {
-            LastShot = lastShot,
+        return Ok(new GetGameStateResponseDto
+        {
+            LastShot = lastShot
         });
     }
 }

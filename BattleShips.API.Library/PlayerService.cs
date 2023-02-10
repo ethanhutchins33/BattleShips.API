@@ -2,6 +2,7 @@
 using BattleShips.API.Data.Models;
 
 namespace BattleShips.API.Library;
+
 public class PlayerService : IPlayerService
 {
     private readonly IRepository<Player> _playerRepository;
@@ -30,7 +31,7 @@ public class PlayerService : IPlayerService
         return await _playerRepository.AddAsync(new Player
         {
             AzureId = azureId,
-            UserName = userName,
+            UserName = userName
         });
     }
 

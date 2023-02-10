@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BattleShips.API.Data.Access;
+﻿namespace BattleShips.API.Data.Access;
 
 public interface IRepository<T> where T : class, IEntity
 {
