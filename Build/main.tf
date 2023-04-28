@@ -34,21 +34,6 @@ resource "azurerm_windows_web_app" "webapp" {
     type  = "SQLAzure"
     value = "Server=tcp:${azurerm_mssql_server.sql-server.fully_qualified_domain_name},1433;Initial Catalog=${azurerm_mssql_database.sql-db.name};Persist Security Info=False;User ID=${azurerm_mssql_server.sql-server.administrator_login};Password=${azurerm_mssql_server.sql-server.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
-
-  logs {
-    application_logs {
-      file_system_level = "Error"
-    }
-    http_logs {
-      file_system {
-        retention_in_days = "5"
-        retention_in_mb   = "35"
-      }
-    }
-    detailed_error_messages = true
-    failed_request_tracing  = true
-
-  }
 }
 
 resource "azurerm_mssql_server" "sql-server" {
