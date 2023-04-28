@@ -9,9 +9,9 @@ namespace BattleShips.API.Tests.Controllers;
 
 internal class GameControllerTests
 {
-    private IGameService _fakeGameService;
-    private IPlayerService _fakePlayerService;
-    private GameController _sut;
+    private IGameService? _fakeGameService;
+    private IPlayerService? _fakePlayerService;
+    private GameController? _sut;
 
     [SetUp]
     public void Setup()
@@ -25,7 +25,7 @@ internal class GameControllerTests
     [Test]
     public void CreateGame_should_return_Dto()
     {
-        var response = _sut.CreateGame();
+        var response = _sut?.CreateGame();
 
         Assert.That(response, Is.TypeOf<Task<ActionResult<CreateGameResponseDto>>>());
     }
