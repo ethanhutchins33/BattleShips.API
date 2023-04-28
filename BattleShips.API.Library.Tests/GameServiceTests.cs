@@ -214,9 +214,10 @@ public class GameServiceTests
     public void NewBoardAsync_returns_new_board_if_it_does_NOT_exist()
     {
         //Arrange
-        var testPlayerId = 1;
-        var testGameId = 1;
+        const int testPlayerId = 1;
+        const int testGameId = 1;
 
+        // ReSharper disable once CollectionNeverUpdated.Local
         var expectedGetAllBoardsResult = new List<Board>();
 
         var expectedBoard = new Board
