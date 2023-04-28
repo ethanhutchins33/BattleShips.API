@@ -100,16 +100,20 @@ stages:
       - package
       - azure
     jobs:
-      - job: Azure_WebApp
-        steps:
-          - download: none
-          - task: DownloadPipelineArtifact@2
-            displayName: 'Download Service'
-            inputs:
-              artifact: project
-              path: $(Pipeline.Workspace)/artifacts/
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: 'Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)'
-              appName: 'battleships-api'
-              package: '$(Pipeline.Workspace)/**/*.zip'
+      - deployment: Azure_WebApp
+        environment: Battleships API Production Environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download Service'
+                  inputs:
+                    artifact: project
+                    path: $(Pipeline.Workspace)/artifacts/
+                - task: AzureWebApp@1
+                  inputs:
+                    azureSubscription: 'Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)'
+                    appName: 'battleships-api'
+                    package: '$(Pipeline.Workspace)/**/*.zip'

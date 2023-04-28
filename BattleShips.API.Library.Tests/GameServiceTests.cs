@@ -62,8 +62,8 @@ public class GameServiceTests
 
         //Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Result.Player1Id, Is.EqualTo(fakePlayer.Id));
-        Assert.That(result.Result.GameCode, Is.EqualTo(fakeGame.GameCode));
+        Assert.That(result.Result?.Player1Id, Is.EqualTo(fakePlayer.Id));
+        Assert.That(result.Result?.GameCode, Is.EqualTo(fakeGame.GameCode));
     }
 
     [Test]
@@ -89,7 +89,7 @@ public class GameServiceTests
         var result = _sut.AddPlayerToGameAsync(testPlayer.Id, testGame.Id);
 
         //Assert
-        Assert.That(result.Result.Player1Id, Is.EqualTo(testPlayer.Id));
+        Assert.That(result.Result?.Player1Id, Is.EqualTo(testPlayer.Id));
     }
 
     [Test]
@@ -115,7 +115,7 @@ public class GameServiceTests
         var result = _sut.AddPlayerToGameAsync(testPlayer.Id, testGame.Id);
 
         //Assert
-        Assert.That(result.Result.Player2Id, Is.EqualTo(testPlayer.Id));
+        Assert.That(result.Result?.Player2Id, Is.EqualTo(testPlayer.Id));
     }
 
     [Test]
@@ -142,8 +142,8 @@ public class GameServiceTests
         var result = _sut.AddPlayerToGameAsync(testPlayer.Id, testGame.Id);
 
         //Assert
-        Assert.That(result.Result.Player1Id, Is.Not.EqualTo(testPlayer.Id));
-        Assert.That(result.Result.Player2Id, Is.Not.EqualTo(testPlayer.Id));
+        Assert.That(result.Result?.Player1Id, Is.Not.EqualTo(testPlayer.Id));
+        Assert.That(result.Result?.Player2Id, Is.Not.EqualTo(testPlayer.Id));
     }
 
     [Test]
@@ -170,8 +170,8 @@ public class GameServiceTests
         var result = _sut.GetGameByGameCode(testGame1.GameCode);
 
         //Assert
-        Assert.That(result.GameCode, Is.EqualTo(testGame1.GameCode));
-        Assert.That(result.GameCode, Is.Not.EqualTo(testGame2.GameCode));
+        Assert.That(result?.GameCode, Is.EqualTo(testGame1.GameCode));
+        Assert.That(result?.GameCode, Is.Not.EqualTo(testGame2.GameCode));
     }
 
     [Test]
@@ -207,16 +207,17 @@ public class GameServiceTests
         //Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Result, Is.TypeOf<Board>());
-        Assert.That(result.Result.GameId, Is.EqualTo(testGameId));
+        Assert.That(result.Result?.GameId, Is.EqualTo(testGameId));
     }
 
     [Test]
     public void NewBoardAsync_returns_new_board_if_it_does_NOT_exist()
     {
         //Arrange
-        var testPlayerId = 1;
-        var testGameId = 1;
+        const int testPlayerId = 1;
+        const int testGameId = 1;
 
+        // ReSharper disable once CollectionNeverUpdated.Local
         var expectedGetAllBoardsResult = new List<Board>();
 
         var expectedBoard = new Board
@@ -235,7 +236,7 @@ public class GameServiceTests
         //Assert
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Result, Is.TypeOf<Board>());
-        Assert.That(result.Result.GameId, Is.EqualTo(testGameId));
+        Assert.That(result.Result?.GameId, Is.EqualTo(testGameId));
     }
 
     [Test]
@@ -328,8 +329,8 @@ public class GameServiceTests
         var result2 = _sut.GetOpponentAsync(testGameId, testPlayerId2);
 
         //Assert
-        Assert.That(result1.Result.Id, Is.EqualTo(testPlayerId2));
-        Assert.That(result2.Result.Id, Is.EqualTo(testPlayerId1));
+        Assert.That(result1.Result?.Id, Is.EqualTo(testPlayerId2));
+        Assert.That(result2.Result?.Id, Is.EqualTo(testPlayerId1));
     }
 
     [Test]
@@ -359,8 +360,8 @@ public class GameServiceTests
 
         //Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.GameId, Is.EqualTo(board1.GameId));
-        Assert.That(result.PlayerId, Is.EqualTo(board1.PlayerId));
+        Assert.That(result?.GameId, Is.EqualTo(board1.GameId));
+        Assert.That(result?.PlayerId, Is.EqualTo(board1.PlayerId));
     }
 
     [Test]
@@ -426,7 +427,7 @@ public class GameServiceTests
         var result = _sut.GetLastShot(testGameId);
 
         //Assert
-        Assert.That(result.Id, Is.EqualTo(lastShotId));
+        Assert.That(result?.Id, Is.EqualTo(lastShotId));
     }
 
     [Test]
@@ -485,7 +486,7 @@ public class GameServiceTests
         var result = _sut.CheckShotAsync(testBoardId, testShipX, testShipY);
 
         //Assert
-        Assert.That(result.Result.ShotStatus, Is.EqualTo("hit"));
+        Assert.That(result.Result?.ShotStatus, Is.EqualTo("hit"));
     }
 
     [Test]
@@ -538,7 +539,7 @@ public class GameServiceTests
         var result = _sut.CheckShotAsync(testBoardId, testShipX, testShipY);
 
         //Assert
-        Assert.That(result.Result.ShotStatus, Is.EqualTo("missed"));
+        Assert.That(result.Result?.ShotStatus, Is.EqualTo("missed"));
     }
 
     [Test]
