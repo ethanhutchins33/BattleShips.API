@@ -118,5 +118,6 @@ stages:
                 - task: AzureWebApp@1
                   inputs:
                     azureSubscription: 'Visual Studio Enterprise Subscription(a334913d-52be-4a66-9c85-c23d324393f0)'
+                    appType: 'WebApp'
                     appName: 'battleships-api'
                     package: '$(Pipeline.Workspace)/**/*.zip'
