@@ -14,6 +14,10 @@ stages:
       - job: dotnet
         container: ukhydrographicoffice/dotnetcore60-zip:latest
         steps:
+          - task: UseDotNet@2
+            inputs:
+              version: '6.x'
+
           - task: DotNetCoreCLI@2
             displayName: "dotnet test"
             inputs:
