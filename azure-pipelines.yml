@@ -12,7 +12,6 @@ stages:
       buildConfiguration: "Release"
     jobs:
       - job: dotnet
-        container: ukhydrographicoffice/dotnetcore60-zip:latest
         steps:
           - task: UseDotNet@2
             inputs:
