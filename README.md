@@ -15,3 +15,23 @@ This project uses Azure B2C authentication which allows the user to login and ma
 ## Testing
 
 To run the unit tests, use `dotnet test`.
+
+## Creating the Docker Image & Container (Notes)
+
+### Build the Image
+
+```bash
+docker build -t battleships-api -f Dockerfile .
+```
+
+### Create the Container
+
+```bash
+docker create --name battleships-api battleships-api
+```
+
+### Run the Container
+
+```bash
+docker start battleships-api   
+```

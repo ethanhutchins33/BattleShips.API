@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13"/>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.13" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,13 +16,14 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Identity.Web" Version="1.25.10"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
+        <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.305" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj"/>
-        <ProjectReference Include="..\BattleShips.API.Library\BattleShips.API.Library.csproj"/>
+        <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj" />
+        <ProjectReference Include="..\BattleShips.API.Library\BattleShips.API.Library.csproj" />
     </ItemGroup>
 
 </Project>
