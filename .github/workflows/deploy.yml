@@ -1,0 +1,60 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: project
+  
+      - name: Configure Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+  
+      - name: Initialize Terraform
+        run: |
+          terraform init
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.TF_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.TF_TENANT_ID }}
+          ARM_CLIENT_ID: ${{ secrets.TF_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.TF_CLIENT_SECRET }}
+  
+      - name: Plan Terraform Deployment
+        run: |
+          terraform plan -input=false -out=tfplan
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.TF_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.TF_TENANT_ID }}
+          ARM_CLIENT_ID: ${{ secrets.TF_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.TF_CLIENT_SECRET }}
+  
+      - name: Apply Terraform Deployment
+        run: |
+          terraform apply 'tfplan'
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.TF_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.TF_TENANT_ID }}
+          ARM_CLIENT_ID: ${{ secrets.TF_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.TF_CLIENT_SECRET }}
+  
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: battleships-api
+          slot-name: production
+          package: ${{ github.workspace }}/project/**/*.zip
+          azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
