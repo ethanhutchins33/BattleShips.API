@@ -10,9 +10,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5761B1FD-2742-44B4-9043-3DD39B3C0043}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		dockerfile = dockerfile
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{0C706F11-F4E6-42F7-8459-5C236DF666B4}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{A4560E28-5986-43F3-BA25-D6C3D25DFF35}"
 	ProjectSection(SolutionItems) = preProject
