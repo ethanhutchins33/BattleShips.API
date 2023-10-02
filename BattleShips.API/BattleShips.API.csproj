@@ -16,7 +16,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Identity.Web" Version="1.25.10" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="2.14.0" />
         <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.305" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     </ItemGroup>
