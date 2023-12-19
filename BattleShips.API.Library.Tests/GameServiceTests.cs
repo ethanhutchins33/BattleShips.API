@@ -11,7 +11,6 @@ public class GameServiceTests
     private readonly IRepository<Game> _gameRepository;
     private readonly IRepository<Player> _playerRepository;
     private readonly IRepository<Ship> _shipRepository;
-    private readonly IRepository<ShipType> _shipTypeRepository;
     private readonly IRepository<Shot> _shotRepository;
     private readonly GameService _sut;
 
@@ -21,7 +20,6 @@ public class GameServiceTests
         _boardRepository = A.Fake<IRepository<Board>>();
         _playerRepository = A.Fake<IRepository<Player>>();
         _shipRepository = A.Fake<IRepository<Ship>>();
-        _shipTypeRepository = A.Fake<IRepository<ShipType>>();
         _shotRepository = A.Fake<IRepository<Shot>>();
 
         _sut = new GameService(
@@ -29,13 +27,7 @@ public class GameServiceTests
             _boardRepository,
             _playerRepository,
             _shipRepository,
-            _shipTypeRepository,
             _shotRepository);
-    }
-
-    [SetUp]
-    public void Setup()
-    {
     }
 
     [Test]
@@ -54,7 +46,8 @@ public class GameServiceTests
             Player1Id = fakePlayer.Id
         };
 
-        A.CallTo(() => _playerRepository.GetAsync(An<int>._)).Returns(fakePlayer);
+        A.CallTo(() => _playerRepository.GetAsync(An<int>._))
+            .Returns(fakePlayer);
         A.CallTo(() => _gameRepository.AddAsync(A<Game>._)).Returns(fakeGame);
 
         //Act
@@ -67,7 +60,8 @@ public class GameServiceTests
     }
 
     [Test]
-    public void AddPlayerToGameAsync_returns_correct_player1_if_already_joined()
+    public async Task
+        AddPlayerToGameAsync_returns_correct_player1_if_already_joined()
     {
         //Arrange
         var testPlayer = new Player
@@ -83,17 +77,22 @@ public class GameServiceTests
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._)).Returns(testGame);
-        A.CallTo(() => _playerRepository.GetAsync(An<int>._)).Returns(testPlayer);
+        A.CallTo(() => _playerRepository.GetAsync(An<int>._))
+            .Returns(testPlayer);
 
         //Act
-        var result = _sut.AddPlayerToGameAsync(testPlayer.Id, testGame.Id);
+        await _sut.AddPlayerToGameAsync(testPlayer.Id, testGame);
 
         //Assert
-        Assert.That(result.Result?.Player1Id, Is.EqualTo(testPlayer.Id));
+        A.CallTo(() =>
+                _gameRepository.UpdateAsync(
+                    A<Game>.That.Matches(g =>
+                        g.Player1Id == testGame.Player1Id)))
+            .MustHaveHappenedOnceExactly();
     }
 
     [Test]
-    public void AddPlayerToGameAsync_returns_correct_player2_if_not_joined()
+    public async Task AddPlayerToGameAsync_returns_correct_player2_if_not_joined()
     {
         //Arrange
         var testPlayer = new Player
@@ -109,17 +108,23 @@ public class GameServiceTests
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._)).Returns(testGame);
-        A.CallTo(() => _playerRepository.GetAsync(An<int>._)).Returns(testPlayer);
+        A.CallTo(() => _playerRepository.GetAsync(An<int>._))
+            .Returns(testPlayer);
 
         //Act
-        var result = _sut.AddPlayerToGameAsync(testPlayer.Id, testGame.Id);
+        await _sut.AddPlayerToGameAsync(testPlayer.Id, testGame);
 
         //Assert
-        Assert.That(result.Result?.Player2Id, Is.EqualTo(testPlayer.Id));
+        A.CallTo(() =>
+                _gameRepository.UpdateAsync(
+                    A<Game>.That.Matches(g =>
+                        g.Player2Id == testPlayer.Id)))
+            .MustHaveHappenedOnceExactly();
     }
 
     [Test]
-    public void AddPlayerToGameAsync_wont_accept_third_joining_player_if_2_players_already_joined()
+    public async Task
+        AddPlayerToGameAsync_wont_accept_third_joining_player_if_2_players_already_joined()
     {
         //Arrange
         var testPlayer = new Player
@@ -136,14 +141,19 @@ public class GameServiceTests
         };
 
         A.CallTo(() => _gameRepository.GetAsync(An<int>._)).Returns(testGame);
-        A.CallTo(() => _playerRepository.GetAsync(An<int>._)).Returns(testPlayer);
+        A.CallTo(() => _playerRepository.GetAsync(An<int>._))
+            .Returns(testPlayer);
 
         //Act
-        var result = _sut.AddPlayerToGameAsync(testPlayer.Id, testGame.Id);
+        await _sut.AddPlayerToGameAsync(testPlayer.Id, testGame);
 
         //Assert
-        Assert.That(result.Result?.Player1Id, Is.Not.EqualTo(testPlayer.Id));
-        Assert.That(result.Result?.Player2Id, Is.Not.EqualTo(testPlayer.Id));
+        A.CallTo(() =>
+                _gameRepository.UpdateAsync(
+                    A<Game>.That.Matches(g =>
+                        g.Player1Id == testPlayer.Id ||
+                        g.Player2Id == testPlayer.Id)))
+            .MustNotHaveHappened();
     }
 
     [Test]
@@ -164,7 +174,8 @@ public class GameServiceTests
 
         var listGames = new List<Game> { testGame1, testGame2 };
 
-        A.CallTo(() => _gameRepository.GetAll()).Returns(listGames.AsQueryable());
+        A.CallTo(() => _gameRepository.GetAll())
+            .Returns(listGames.AsQueryable());
 
         //Act
         var result = _sut.GetGameByGameCode(testGame1.GameCode);
@@ -175,72 +186,25 @@ public class GameServiceTests
     }
 
     [Test]
-    public void NewBoardAsync_returns_current_board_if_it_already_exists()
+    public async Task NewBoardAsync_creates_new_board()
     {
         //Arrange
         const int testPlayerId = 1;
         const int testGameId = 1;
 
-        var expectedGetAllBoardsResult = new List<Board>
-        {
-            new()
-            {
-                Id = 1,
-                GameId = 1,
-                IsReady = false,
-                PlayerId = 1
-            },
-            new()
-            {
-                Id = 2,
-                GameId = 1,
-                IsReady = false,
-                PlayerId = 2
-            }
-        };
-
-        A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardsResult.AsQueryable());
-
         //Act
-        var result = _sut.NewBoardAsync(testPlayerId, testGameId);
+        await _sut.NewBoardAsync(testPlayerId, testGameId);
 
         //Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Result, Is.TypeOf<Board>());
-        Assert.That(result.Result?.GameId, Is.EqualTo(testGameId));
+        A.CallTo(() =>
+                _boardRepository.AddAsync(
+                    A<Board>.That.Matches(b =>
+                        b.GameId == testGameId && b.PlayerId == testPlayerId)))
+            .MustHaveHappenedOnceExactly();
     }
 
     [Test]
-    public void NewBoardAsync_returns_new_board_if_it_does_NOT_exist()
-    {
-        //Arrange
-        const int testPlayerId = 1;
-        const int testGameId = 1;
-
-        // ReSharper disable once CollectionNeverUpdated.Local
-        var expectedGetAllBoardsResult = new List<Board>();
-
-        var expectedBoard = new Board
-        {
-            PlayerId = testPlayerId,
-            GameId = testGameId
-        };
-
-        A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardsResult.AsQueryable());
-
-        A.CallTo(() => _boardRepository.AddAsync(A<Board>._)).Returns(expectedBoard);
-
-        //Act
-        var result = _sut.NewBoardAsync(testPlayerId, testGameId);
-
-        //Assert
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.Result, Is.TypeOf<Board>());
-        Assert.That(result.Result?.GameId, Is.EqualTo(testGameId));
-    }
-
-    [Test]
-    public void AddShipsToBoardAsync_adds_correct_number_of_ships_to_db()
+    public async Task AddShipsToBoardAsync_adds_correct_number_of_ships_to_db()
     {
         //Arrange
         const int testPlayerId = 1;
@@ -276,11 +240,13 @@ public class GameServiceTests
             }
         };
 
-        A.CallTo(() => _gameRepository.GetAll()).Returns(expectedGetAllGameList.AsQueryable());
-        A.CallTo(() => _boardRepository.GetAll()).Returns(expectedGetAllBoardList.AsQueryable());
+        A.CallTo(() => _gameRepository.GetAll())
+            .Returns(expectedGetAllGameList.AsQueryable());
+        A.CallTo(() => _boardRepository.GetAll())
+            .Returns(expectedGetAllBoardList.AsQueryable());
 
         //Act
-        _ = _sut.AddShipsToBoardAsync(testShips, testGameCode, testPlayerId);
+        await _sut.AddShipsToBoardAsync(testShips, testGameCode, testPlayerId);
 
         //Assert
         A.CallTo(() => _shipRepository.AddAsync(A<Ship>._))
@@ -288,28 +254,24 @@ public class GameServiceTests
     }
 
     [Test]
-    public void GetOpponentAsync_should_return_opponent()
+    public async Task GetOpponentAsync_should_return_opponent()
     {
         //Arrange
-        const int testPlayerId1 = 1;
-        const int testPlayerId2 = 2;
-        const int testGameId = 1;
+        var testPlayer = new Player
+        {
+            Id = 1
+        };
+
+        var opponent = new Player
+        {
+            Id = 2
+        };
 
         var expectedGame = new Game
         {
-            Id = testGameId,
-            Player1Id = testPlayerId1,
-            Player2Id = testPlayerId2
-        };
-
-        var expectedPlayer1 = new Player
-        {
-            Id = testPlayerId1
-        };
-
-        var expectedPlayer2 = new Player
-        {
-            Id = testPlayerId2
+            Id = 1,
+            Player1Id = testPlayer.Id,
+            Player2Id = opponent.Id
         };
 
         A.CallTo(() => _gameRepository
@@ -317,20 +279,21 @@ public class GameServiceTests
             .Returns(expectedGame);
 
         A.CallTo(() => _playerRepository
-                .GetAsync(An<int>.That.Matches(i => i == testPlayerId1)))
-            .Returns(expectedPlayer1);
+                .GetAsync(An<int>.That.Matches(i => i == testPlayer.Id)))
+            .Returns(testPlayer);
 
         A.CallTo(() => _playerRepository
-                .GetAsync(An<int>.That.Matches(i => i == testPlayerId2)))
-            .Returns(expectedPlayer2);
+                .GetAsync(An<int>.That.Matches(i => i == opponent.Id)))
+            .Returns(opponent);
 
         //Act
-        var result1 = _sut.GetOpponentAsync(testGameId, testPlayerId1);
-        var result2 = _sut.GetOpponentAsync(testGameId, testPlayerId2);
+        var opponentResult =
+            await _sut.GetOpponentAsync(expectedGame.Id, expectedGame.Player1Id);
+
+        ArgumentNullException.ThrowIfNull(opponentResult);
 
         //Assert
-        Assert.That(result1.Result?.Id, Is.EqualTo(testPlayerId2));
-        Assert.That(result2.Result?.Id, Is.EqualTo(testPlayerId1));
+        Assert.That(opponentResult.Id, Is.EqualTo(opponent.Id));
     }
 
     [Test]
@@ -353,15 +316,16 @@ public class GameServiceTests
 
         var listBoards = new List<Board> { board1, board2 };
 
-        A.CallTo(() => _boardRepository.GetAll()).Returns(listBoards.AsQueryable());
+        A.CallTo(() => _boardRepository.GetAll())
+            .Returns(listBoards.AsQueryable());
 
         //Act
         var result = _sut.GetBoard(1, 1);
 
         //Assert
         Assert.That(result, Is.Not.Null);
-        Assert.That(result?.GameId, Is.EqualTo(board1.GameId));
-        Assert.That(result?.PlayerId, Is.EqualTo(board1.PlayerId));
+        Assert.That(result.GameId, Is.EqualTo(board1.GameId));
+        Assert.That(result.PlayerId, Is.EqualTo(board1.PlayerId));
     }
 
     [Test]
@@ -648,7 +612,8 @@ public class GameServiceTests
     }
 
     [Test]
-    public void GetLobbyReadyStatusAsync_should_return_true_if_both_players_ready()
+    public void
+        GetLobbyReadyStatusAsync_should_return_true_if_both_players_ready()
     {
         const int testGameId = 5;
         const int testPlayer1Id = 2;
@@ -694,7 +659,8 @@ public class GameServiceTests
     }
 
     [Test]
-    public void GetLobbyReadyStatusAsync_should_return_false_if_one_player_is_NOT_ready()
+    public void
+        GetLobbyReadyStatusAsync_should_return_false_if_one_player_is_NOT_ready()
     {
         const int testGameId = 5;
         const int testPlayer1Id = 2;
@@ -740,7 +706,8 @@ public class GameServiceTests
     }
 
     [Test]
-    public void GetLobbyReadyStatusAsync_should_return_false_if_player2_has_not_joined_game_yet()
+    public void
+        GetLobbyReadyStatusAsync_should_return_false_if_player2_has_not_joined_game_yet()
     {
         const int testGameId = 5;
         const int testPlayer1Id = 2;

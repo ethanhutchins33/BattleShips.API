@@ -5,7 +5,8 @@ namespace BattleShips.API.Data.Access;
 
 public class BattleShipsContext : DbContext
 {
-    public BattleShipsContext(DbContextOptions<BattleShipsContext> options) : base(options)
+    public BattleShipsContext(DbContextOptions<BattleShipsContext> options) :
+        base(options)
     {
     }
 

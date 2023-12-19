@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
@@ -16,14 +16,13 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Identity.Web" Version="2.15.3" />
-        <PackageReference Include="Microsoft.NET.Build.Containers" Version="7.0.403" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="2.15.3"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj" />
-        <ProjectReference Include="..\BattleShips.API.Library\BattleShips.API.Library.csproj" />
+        <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj"/>
+        <ProjectReference Include="..\BattleShips.API.Library\BattleShips.API.Library.csproj"/>
     </ItemGroup>
 
 </Project>
