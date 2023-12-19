@@ -13,23 +13,11 @@ public abstract class Repository<TEntity, TContext> : IRepository<TEntity>
         _context = context;
     }
 
-    public async Task<TEntity?> AddAsync(TEntity? entity)
+    public async Task<TEntity> AddAsync(TEntity entity)
     {
-        try
-        {
-            if (entity != null)
-            {
-                _context.Set<TEntity>().Add(entity);
-                await _context.SaveChangesAsync();
-                return entity;
-            }
-        }
-        catch
-        {
-            return null;
-        }
-
-        return null;
+        _context.Set<TEntity>().Add(entity);
+        await _context.SaveChangesAsync();
+        return entity;
     }
 
     public IQueryable<TEntity>? GetAll()

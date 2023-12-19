@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj" />
+        <ProjectReference Include="..\BattleShips.API.Data\BattleShips.API.Data.csproj"/>
     </ItemGroup>
 
 </Project>

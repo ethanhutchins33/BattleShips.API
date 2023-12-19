@@ -25,7 +25,7 @@ resource "azurerm_windows_web_app" "webapp" {
 
     application_stack {
       current_stack  = "dotnet"
-      dotnet_version = "v6.0"
+      dotnet_version = "v8.0"
     }
   }
 
@@ -54,7 +54,7 @@ resource "azurerm_mssql_database" "sql-db" {
   server_id   = azurerm_mssql_server.sql-server.id
   max_size_gb = 10
   sku_name    = "S0"
-  tags = {
+  tags        = {
     environment = "production"
   }
 }

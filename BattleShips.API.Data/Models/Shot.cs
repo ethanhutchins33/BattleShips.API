@@ -5,10 +5,11 @@ namespace BattleShips.API.Data.Models;
 
 public class Shot : IEntity
 {
-    public int BoardId { get; set; }
+    public int BoardId { get; init; }
     public int X { get; set; }
     public int Y { get; set; }
-    public string ShotStatus { get; set; } = string.Empty;
+
+    [MaxLength(20)] public string ShotStatus { get; init; } = string.Empty;
 
     [Key] public int Id { get; set; }
 }

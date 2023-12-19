@@ -1,4 +1,5 @@
-﻿using BattleShips.API.Library;
+﻿using System.Net;
+using BattleShips.API.Library;
 using BattleShips.API.Library.Requests;
 using BattleShips.API.Library.Responses;
 using Microsoft.AspNetCore.Authorization;
@@ -29,13 +30,14 @@ public class GameController : ControllerBase
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
 
         var player = _playerService.Get(Guid.Parse(azureId));
-
-        if (player == null) return BadRequest($"{nameof(CreateGame)}: Could not find player with Azure Id: {azureId}");
+        if (player is null)
+            return BadRequest(
+                $"{nameof(CreateGame)}: Could not find player with Azure Id: {azureId}");
 
         var newGame = await _gameService.SetupNewGameAsync(player.Id);
-
-        if (newGame == null)
-            return StatusCode(500, $"{nameof(CreateGame)}: Could not setup new game with Player Id: {player.Id}");
+        if (newGame is null)
+            return StatusCode(500,
+                $"{nameof(CreateGame)}: Could not setup new game with Player Id: {player.Id}");
 
         return Ok(
             new CreateGameResponseDto
@@ -52,27 +54,24 @@ public class GameController : ControllerBase
         var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
 
         var player = _playerService.Get(Guid.Parse(azureId));
-        if (player == null) return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Azure ID: {azureId}");
+        if (player is null)
+            return StatusCode((int)HttpStatusCode.BadRequest,
+                $"{nameof(JoinGame)}: No Player found with Azure ID: {azureId}");
 
         var game = _gameService.GetGameByGameCode(gameCode);
-        if (game == null) return StatusCode(500, $"{nameof(JoinGame)}: No Game found with Game Code: {gameCode}");
+        if (game is null)
+            return StatusCode((int)HttpStatusCode.BadRequest,
+                $"{nameof(JoinGame)}: No Game found with Game Code: {gameCode}");
 
-        var gameToReturn = await _gameService.AddPlayerToGameAsync(player.Id, game.Id);
-        if (gameToReturn == null)
-            return StatusCode(500,
-                $"{nameof(JoinGame)}: No Game found when trying to add player to Game Id: {game.Id} with PlayerId: {player.Id}");
+        await _gameService.AddPlayerToGameAsync(player.Id, game);
 
         //check if board already exists
         var boardToReturn = _gameService.GetBoard(game.Id, player.Id) ??
                             await _gameService.NewBoardAsync(player.Id, game.Id);
 
-        if (boardToReturn == null)
-            return StatusCode(500,
-                $"{nameof(JoinGame)}: No Board created when trying to add player to Game Id: {game.Id} with PlayerId: {player.Id}");
-
         return Ok(new JoinGameResponseDto
         {
-            GameId = gameToReturn.Id,
+            GameId = game.Id,
             BoardId = boardToReturn.Id,
             PlayerId = player.Id,
             PlayerName = player.UserName
@@ -81,9 +80,11 @@ public class GameController : ControllerBase
 
     [HttpPost]
     [Route("addships")]
-    public async Task<ActionResult<AddShipsResponseDto>> AddPlayerShips(AddShipsRequestDto addShips)
+    public async Task<ActionResult<AddShipsResponseDto>> AddPlayerShips(
+        AddShipsRequestDto addShips)
     {
-        await _gameService.AddShipsToBoardAsync(addShips.Board, addShips.GameCode, addShips.PlayerId);
+        await _gameService.AddShipsToBoardAsync(addShips.Board, addShips.GameCode,
+            addShips.PlayerId);
 
         await _gameService.ReadyUpAsync(addShips.GameCode, addShips.PlayerId);
 
@@ -97,7 +98,8 @@ public class GameController : ControllerBase
 
     [HttpPost]
     [Route("fire")]
-    public async Task<ActionResult<ShotFiredResponseDto>> ShotFired(ShotFiredRequestDto shotFiredRequestDto)
+    public async Task<ActionResult<ShotFiredResponseDto>> ShotFired(
+        ShotFiredRequestDto shotFiredRequestDto)
     {
         Console.WriteLine(shotFiredRequestDto.BoardId);
         Console.WriteLine($"Shot: ({shotFiredRequestDto.X}, {shotFiredRequestDto.Y})");
@@ -109,7 +111,7 @@ public class GameController : ControllerBase
             shotFiredRequestDto.Y
         );
 
-        if (result == null) return NoContent();
+        if (result is null) return NoContent();
 
         return Ok(new ShotFiredResponseDto
         {
@@ -119,7 +121,8 @@ public class GameController : ControllerBase
 
     [HttpGet]
     [Route("ready/{gameId}")]
-    public async Task<ActionResult<GetLobbyDetailsResponseDto>> PollLobbyDetails(int gameId)
+    public async Task<ActionResult<GetLobbyDetailsResponseDto>> PollLobbyDetails(
+        int gameId)
     {
         var playersReady = await _gameService.GetLobbyReadyStatusAsync(gameId);
 
@@ -155,25 +158,31 @@ public class GameController : ControllerBase
 
     [HttpGet]
     [Route("state/{gameId}/{hostId}")]
-    public async Task<ActionResult<GetFullGameStateResponseDto>> GetFullGameState(int gameId, int hostId)
+    public async Task<ActionResult<GetFullGameStateResponseDto>> GetFullGameState(
+        int gameId, int hostId)
     {
         var host = await _playerService.GetAsync(hostId);
 
-        if (host == null) return StatusCode(500, $"{nameof(JoinGame)}: No Player found with Player Id: {hostId}");
+        if (host is null)
+            return StatusCode(500,
+                $"{nameof(JoinGame)}: No Player found with Player Id: {hostId}");
 
         var hostBoard = _gameService.GetBoard(gameId, host.Id);
 
-        if (hostBoard == null) return StatusCode(500, $"{nameof(JoinGame)}: No Board found for Player Id: {hostId}");
+        if (hostBoard is null)
+            return StatusCode(500,
+                $"{nameof(JoinGame)}: No Board found for Player Id: {hostId}");
 
         var hostShipsMatrix = _gameService.GetShipsMatrix(hostBoard.Id);
 
-        if (hostShipsMatrix.ToString() == null)
-            return StatusCode(500, $"{nameof(JoinGame)}: No Ships found for Board Id: {hostBoard.Id}");
+        if (hostShipsMatrix.ToString() is null)
+            return StatusCode(500,
+                $"{nameof(JoinGame)}: No Ships found for Board Id: {hostBoard.Id}");
 
         var opponent =
             await _gameService.GetOpponentAsync(gameId, hostId);
 
-        if (opponent == null)
+        if (opponent is null)
             return Ok(new GetFullGameStateResponseDto
             {
                 GameId = gameId,
@@ -185,7 +194,7 @@ public class GameController : ControllerBase
 
         var opponentBoard = _gameService.GetBoard(gameId, opponent.Id);
 
-        if (opponentBoard == null)
+        if (opponentBoard is null)
             return Ok(new GetFullGameStateResponseDto
             {
                 GameId = gameId,
@@ -216,7 +225,7 @@ public class GameController : ControllerBase
     {
         var lastShot = _gameService.GetLastShot(gameId);
 
-        if (lastShot == null) return NoContent();
+        if (lastShot is null) return NoContent();
 
         return Ok(new GetGameStateResponseDto
         {

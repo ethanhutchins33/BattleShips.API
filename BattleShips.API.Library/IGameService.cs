@@ -5,8 +5,8 @@ namespace BattleShips.API.Library;
 public interface IGameService
 {
     Task<Game?> SetupNewGameAsync(int playerId);
-    Task<Game?> AddPlayerToGameAsync(int joiningPlayerId, int gameId);
-    Task<Board?> NewBoardAsync(int playerId, int gameId);
+    Task AddPlayerToGameAsync(int joiningPlayerId, Game game);
+    Task<Board> NewBoardAsync(int playerId, int gameId);
     Task AddShipsToBoardAsync(string[,] ships, string gameCode, int playerId);
 
     Task<bool> GetLobbyReadyStatusAsync(int gameId);
