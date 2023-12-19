@@ -1,0 +1,102 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.x'
+
+      - name: .NET Test
+        run: dotnet test **/*Tests/*.csproj --configuration Release
+
+      - name: .NET Publish
+        run: dotnet publish **/*.csproj --configuration Release --output $(Build.ArtifactStagingDirectory)/publish --self-contained true
+
+      - name: Copy Project Files to Staging Directory
+        run: cp -R $(GITHUB_WORKSPACE)/publish $(Build.ArtifactStagingDirectory)
+
+      - name: Archive Project
+        uses: actions/upload-artifact@v2
+        with:
+          name: project
+          path: $(Build.ArtifactStagingDirectory)/publish
+
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        run: |
+          terraform init
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.tf-subscription-id }}
+          ARM_TENANT_ID: ${{ secrets.tf-tenant-id }}
+          ARM_CLIENT_ID: ${{ secrets.tf-client-id }}
+          ARM_CLIENT_SECRET: ${{ secrets.tf-client-secret }}
+          ARM_ACCESS_KEY: ${{ secrets.tf-access-key }}
+          TF_VAR_SQL_SERVER_USERNAME: ${{ secrets.tf-sql-server-admin-username }}
+          TF_VAR_SQL_SERVER_PASSWORD: ${{ secrets.tf-sql-server-admin-password }}
+
+      - name: Terraform Plan
+        run: |
+          terraform plan -input=false -out=tfplan
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.tf-subscription-id }}
+          ARM_TENANT_ID: ${{ secrets.tf-tenant-id }}
+          ARM_CLIENT_ID: ${{ secrets.tf-client-id }}
+          ARM_CLIENT_SECRET: ${{ secrets.tf-client-secret }}
+          ARM_ACCESS_KEY: ${{ secrets.tf-access-key }}
+          TF_VAR_SQL_SERVER_USERNAME: ${{ secrets.tf-sql-server-admin-username }}
+          TF_VAR_SQL_SERVER_PASSWORD: ${{ secrets.tf-sql-server-admin-password }}
+
+      - name: Terraform Apply
+        run: |
+          terraform apply 'tfplan'
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.tf-subscription-id }}
+          ARM_TENANT_ID: ${{ secrets.tf-tenant-id }}
+          ARM_CLIENT_ID: ${{ secrets.tf-client-id }}
+          ARM_CLIENT_SECRET: ${{ secrets.tf-client-secret }}
+          ARM_ACCESS_KEY: ${{ secrets.tf-access-key }}
+          TF_VAR_SQL_SERVER_USERNAME: ${{ secrets.tf-sql-server-admin-username }}
+          TF_VAR_SQL_SERVER_PASSWORD: ${{ secrets.tf-sql-server-admin-password }}
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: [build, terraform]
+
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: project
+          path: $(Build.ArtifactStagingDirectory)/project
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'battleships-api'
+          package: $(Build.ArtifactStagingDirectory)/project/**/*.zip
+          slot-name: 'production' # If using deployment slots
+          action: 'deploy'
+        env:
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.azure-subscription-id }}
+          AZURE_APP_ID: ${{ secrets.azure-app-id }}
+          AZURE_APP_SECRET: ${{ secrets.azure-app-secret }}
+          AZURE_TENANT_ID: ${{ secrets.azure-tenant-id }}
