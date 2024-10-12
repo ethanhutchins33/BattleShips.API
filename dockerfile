@@ -12,4 +12,6 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /
 COPY --from=build-env /out .
-ENTRYPOINT ["dotnet", "DotNet.Docker.dll"]
+
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "BattleShips.API.dll"]
