@@ -1,0 +1,22 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=LocalDev!
+    ports:
+      - "1433:1433"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Db-ConnString=Data Source=sqlserver,1433;Initial Catalog = GameDb;User Id=sa;Password=LocalDev!;TrustServerCertificate=True;
+    ports:
+      - "1434:8080"
+    depends_on:
+      - sqlserver
+    restart: unless-stopped
