@@ -5,7 +5,7 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=LocalDev!
     ports:
-      - "1433:1433"
+      - "1533:1433"
     restart: unless-stopped
 
   api:
@@ -16,7 +16,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Db-ConnString=Data Source=sqlserver,1433;Initial Catalog = GameDb;User Id=sa;Password=LocalDev!;TrustServerCertificate=True;
     ports:
-      - "1434:8080"
+      - "1534:8080"
     depends_on:
       - sqlserver
     restart: unless-stopped
