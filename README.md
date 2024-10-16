@@ -39,3 +39,23 @@ docker create --name battleships-api battleships-api
 ```bash
 docker start battleships-api   
 ```
+
+## Using Docker Compose
+
+Docker Compose can be used to combine runtime containers and dependent services (eg. SQL Server).
+
+From root folder containing docker-compose.yml, run the following commands:
+
+### Run Containers in Detached Mode
+
+```bash
+docker compose up -d
+```
+
+Note: a "--build" flag can also be passed on to force an image rebuild on any subsequent code change
+
+### Stop Containers
+
+```bash
+docker compose stop
+```
