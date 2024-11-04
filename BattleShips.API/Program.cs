@@ -26,12 +26,6 @@ builder.Services.AddScoped<IPlayerService, PlayerService>();
 
 builder.Services.AddHealthChecks();
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
-
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {
     options.UseSqlServer("name=ConnectionStrings:Db-ConnString");
@@ -55,9 +49,9 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
-//var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
-//dbContext.Database.EnsureDeleted();
-//dbContext.Database.EnsureCreated();
+var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
+dbContext.Database.EnsureDeleted();
+dbContext.Database.EnsureCreated();
 // dbContext.Database.Migrate();
 
 if (app.Environment.IsDevelopment())
@@ -69,9 +63,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("AllowSpecificOriginPolicy");
-
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 

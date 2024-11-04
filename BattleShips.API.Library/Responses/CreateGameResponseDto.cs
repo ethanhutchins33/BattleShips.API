@@ -4,4 +4,5 @@ public class CreateGameResponseDto
 {
     public int GameId { get; set; }
     public string GameCode { get; set; } = string.Empty;
+    public int BoardId { get; set; }
 }

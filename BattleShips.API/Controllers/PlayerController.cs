@@ -7,13 +7,10 @@ using Microsoft.Identity.Web.Resource;
 
 namespace BattleShips.API.Controllers;
 
-[Authorize]
-[EnableCors("AllowSpecificOriginPolicy")]
 [ApiController]
 [Route("api/player")]
 public class PlayerController : ControllerBase
 {
-    private static readonly string[] Scope = { "battleships.api" };
     private readonly IPlayerService _playerService;
 
     public PlayerController(IPlayerService playerService)
@@ -25,14 +22,13 @@ public class PlayerController : ControllerBase
     [Route("get")]
     public async Task<ActionResult<Player>> Get()
     {
-        HttpContext.VerifyUserHasAnyAcceptedScope(Scope);
-        var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
-        var userName = HttpContext.User.Claims.Single(c => c.Type == "name").Value;
-        var profileToReturn = _playerService.Get(Guid.Parse(azureId));
+        var azureId = Guid.NewGuid();
+        var userName = $"User-{azureId}";
+        var profileToReturn = _playerService.Get(userName);
 
         if (profileToReturn != null) return Ok(profileToReturn);
 
-        profileToReturn = await _playerService.AddAsync(Guid.Parse(azureId), userName);
+        profileToReturn = await _playerService.AddAsync(azureId, userName);
 
         return Ok(profileToReturn);
     }

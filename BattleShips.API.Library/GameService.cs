@@ -114,16 +114,12 @@ public class GameService(
         return null;
     }
 
-    public Board GetBoard(int gameId, int playerId)
+    public Board? GetBoard(int gameId, int playerId)
     {
         var boards = boardRepository.GetAll();
 
-        ArgumentNullException.ThrowIfNull(boards);
-
         var board =
-            boards.Single(b => b.PlayerId == playerId && b.GameId == gameId);
-
-        ArgumentNullException.ThrowIfNull(board);
+            boards!.SingleOrDefault(b => b.PlayerId == playerId && b.GameId == gameId);
 
         return board;
     }

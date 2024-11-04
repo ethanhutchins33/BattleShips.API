@@ -12,11 +12,11 @@ public class PlayerService : IPlayerService
         _playerRepository = playerRepository;
     }
 
-    public Player? Get(Guid azureId)
+    public Player? Get(string userName)
     {
         var players = _playerRepository.GetAll();
 
-        var player = players?.FirstOrDefault(x => x.AzureId == azureId);
+        var player = players?.FirstOrDefault(x => x.UserName == userName);
 
         return player ?? null;
     }
@@ -30,7 +30,6 @@ public class PlayerService : IPlayerService
     {
         return await _playerRepository.AddAsync(new Player
         {
-            AzureId = azureId,
             UserName = userName
         });
     }

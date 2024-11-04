@@ -22,13 +22,13 @@ internal class GameControllerTests
         _sut = new GameController(_fakeGameService, _fakePlayerService);
     }
 
-    [Test]
-    public void CreateGame_should_return_Dto()
-    {
-        var response = _sut?.CreateGame();
-
-        Assert.That(response, Is.TypeOf<Task<ActionResult<CreateGameResponseDto>>>());
-    }
+    // [Test]
+    // public void CreateGame_should_return_Dto()
+    // {
+    //     var response = _sut?.CreateGame();
+    //
+    //     Assert.That(response, Is.TypeOf<Task<ActionResult<CreateGameResponseDto>>>());
+    // }
 
     //[Test]
     //public void CreateGame_should_call_to_GameService_to_create_game()

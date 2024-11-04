@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BattleShips.API.Controllers;
 
-[Authorize]
 [EnableCors("AllowSpecificOriginPolicy")]
 [ApiController]
 [Route("api/game")]
@@ -25,38 +24,37 @@ public class GameController : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public async Task<ActionResult<CreateGameResponseDto>> CreateGame()
+    public async Task<ActionResult<CreateGameResponseDto>> CreateGame(string userName)
     {
-        var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
-
-        var player = _playerService.Get(Guid.Parse(azureId));
+        var player = _playerService.Get(userName);
         if (player is null)
             return BadRequest(
-                $"{nameof(CreateGame)}: Could not find player with Azure Id: {azureId}");
+                $"{nameof(CreateGame)}: Could not find player with Username: {userName}");
 
         var newGame = await _gameService.SetupNewGameAsync(player.Id);
         if (newGame is null)
             return StatusCode(500,
                 $"{nameof(CreateGame)}: Could not setup new game with Player Id: {player.Id}");
 
+        var board = await _gameService.NewBoardAsync(player.Id, newGame.Id);
+
         return Ok(
             new CreateGameResponseDto
             {
                 GameId = newGame.Id,
-                GameCode = newGame.GameCode
+                GameCode = newGame.GameCode,
+                BoardId = board.Id
             });
     }
 
     [HttpPost]
     [Route("join/{gameCode}")]
-    public async Task<ActionResult<JoinGameResponseDto>> JoinGame(string gameCode)
+    public async Task<ActionResult<JoinGameResponseDto>> JoinGame(string userName, string gameCode)
     {
-        var azureId = HttpContext.User.Claims.Single(c => c.Type == "sub").Value;
-
-        var player = _playerService.Get(Guid.Parse(azureId));
+        var player = _playerService.Get(userName);
         if (player is null)
             return StatusCode((int)HttpStatusCode.BadRequest,
-                $"{nameof(JoinGame)}: No Player found with Azure ID: {azureId}");
+                $"{nameof(JoinGame)}: No Player found with Username: {userName}");
 
         var game = _gameService.GetGameByGameCode(gameCode);
         if (game is null)
