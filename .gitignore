@@ -504,4 +504,7 @@ FodyWeavers.xsd
 ### VisualStudio Patch ###
 # Additional files built by Visual Studio
 
+# Environment File
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,rider,visualstudio,dotnetcore

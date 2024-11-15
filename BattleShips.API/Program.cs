@@ -34,7 +34,7 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {
-    options.UseSqlServer("name=ConnectionStrings:Db-ConnString");
+    options.UseSqlServer("name=ConnectionStrings:BattleshipsSqlServer");
 });
 
 builder.Services.AddCors(options =>

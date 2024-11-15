@@ -3,20 +3,28 @@ services:
     image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=LocalDev!
+      - SA_PASSWORD=${SA_PASSWORD}
     ports:
-      - "1533:1433"
+      - "1433:1433"
     restart: unless-stopped
 
   api:
     build:
       context: .
-      dockerfile: dockerfile
+      dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Db-ConnString=Data Source=sqlserver,1433;Initial Catalog = GameDb;User Id=sa;Password=LocalDev!;TrustServerCertificate=True;
+      - ConnectionStrings__BattleshipsSqlServer: |
+          Data Source=sqlserver,1433;
+          Initial Catalog=GameDb;
+          User Id=sa;
+          Password=${SA_PASSWORD};
+          TrustServerCertificate=True;
     ports:
-      - "1534:8080"
+      - "5000:80"
     depends_on:
       - sqlserver
     restart: unless-stopped
+
+env_file:
+  - .env

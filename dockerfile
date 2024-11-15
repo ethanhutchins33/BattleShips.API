@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-WORKDIR /
+WORKDIR /app
 
 # Copy everything
 COPY . ./
@@ -13,5 +13,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /
 COPY --from=build-env /out .
 
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT ["dotnet", "BattleShips.API.dll"]
