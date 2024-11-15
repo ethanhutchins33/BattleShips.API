@@ -3,7 +3,7 @@ WORKDIR /
 
 # Copy everything
 COPY . ./
-# Restore as distinct layers
+# Restore
 RUN dotnet restore
 # Build and publish a release
 RUN dotnet publish -c Release -o out
