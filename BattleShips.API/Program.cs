@@ -34,7 +34,7 @@ JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddDbContext<BattleShipsContext>(options =>
 {
-    options.UseSqlServer("name=ConnectionStrings:Db-ConnString");
+    options.UseSqlServer("name=ConnectionStrings:BattleshipsSqlServer");
 });
 
 builder.Services.AddCors(options =>
@@ -55,10 +55,10 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
-//var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
+
+var dbContext = scope.ServiceProvider.GetRequiredService<BattleShipsContext>();
 //dbContext.Database.EnsureDeleted();
-//dbContext.Database.EnsureCreated();
-// dbContext.Database.Migrate();
+dbContext.Database.EnsureCreated();
 
 if (app.Environment.IsDevelopment())
 {
